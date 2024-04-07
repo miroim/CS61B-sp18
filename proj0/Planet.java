@@ -26,12 +26,26 @@ public class Planet {
 
   public double calcDistance(Planet p) {
     /* distance between points as:
-     *          _______________________
-     *         /         2            2
-     *   d = \/ (x1 - x0)  + (y1 - y0)
+     *         _________________________
+     *   d = \/ (x1 - x0)²  + (y1 - y0)²
     */
     double distance;
     distance = Math.sqrt(Math.pow(p.xxPos-this.xxPos, 2) + Math.pow(p.yyPos-this.yyPos, 2));
     return distance;
+  }
+
+  public double calcForceExertedBy(Planet p) {
+    /* force 
+     * m1: the mass of planet1
+     * m2: the mass of planet2
+     * 
+     *      G * m1 * m2
+     * F = --------------
+     *          d²
+     */
+    double G = 6.67e-11; //the gravitational constant
+    double force = G * this.mass * p.mass / Math.pow(this.calcDistance(p), 2);
+
+    return force;
   }
 }
