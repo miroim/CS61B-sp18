@@ -31,5 +31,51 @@ public class NBody {
     double r = readRadius(filename);
     Planet[] planets = readPlanets(filename);
 
+    // create background
+    String backgroundPath = "images/starfield.jpg";
+    StdDraw.setScale(-r,r); // set background scale
+    StdDraw.picture(0, 0, backgroundPath);
+    
+    // draw all plants into background
+    for(Planet p : planets) {
+      p.draw();
+    }
+
+		StdDraw.enableDoubleBuffering();
+
+    int time = 0;
+    while(time < T) {
+      int n = planets.length;
+      double xForces[] = new double[n];
+      double yForces[] = new double[n];
+
+      // calculate net x and y forces for each planet and storing in xForces and yForces respectively
+      for(int i=0; i<n; i++) {
+        xForces[i] = planets[i].calcNetForceExertedByX(planets);
+        yForces[i] = planets[i].calcNetForceExertedByY(planets);
+      }
+
+      // update each planet
+      for(int i=0; i<n; i++) {
+        planets[i].update(dt, xForces[i], yForces[i]);
+      }
+
+      // redraw background and all planets
+      StdDraw.picture(0, 0, backgroundPath);
+      for(Planet p : planets) {
+        p.draw();
+      }
+      StdDraw.show();
+      StdDraw.pause(100); // wait 100 milliseconds
+
+      time += dt;
+    }
+
+    StdOut.printf("%d\n",planets.length);
+    StdOut.printf("%.2e\n",r);
+    for(Planet p : planets) {
+      StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n", p.xxPos, p.yyPos, p.xxVel, p.yyVel, p.mass, p.imgFileName);
+    }
+
   }
 }

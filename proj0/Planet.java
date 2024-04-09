@@ -136,4 +136,9 @@ public class Planet {
     this.xxPos = xxPos_new;
     this.yyPos = yyPos_new;
   }
+
+  public void draw() {
+    String imagePath = "images/" + this.imgFileName;
+    StdDraw.picture(this.xxPos, this.yyPos, imagePath);
+  }
 }
