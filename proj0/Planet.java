@@ -1,10 +1,10 @@
 public class Planet {
-  double xxPos; // current x position
-  double yyPos; // current y position
-  double xxVel; // current velocity in the x direction 
-  double yyVel; // current velocity in the y direction 
-  double mass;  // mass
-  String imgFileName; 
+  public double xxPos; // current x position
+  public double yyPos; // current y position
+  public double xxVel; // current velocity in the x direction 
+  public double yyVel; // current velocity in the y direction 
+  public double mass;  // mass
+  public String imgFileName; 
 
   public Planet(double xP, double yP, double xV, double yV, double m, String img) {
     this.xxPos = xP;
