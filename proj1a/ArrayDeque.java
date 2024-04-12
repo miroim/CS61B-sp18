@@ -103,11 +103,11 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
+        T item = items[indexFirst()];
         float ratio = (float) size / items.length; // the ratio of usage
         if (ratio < 0.25 && items.length >= 16) { // the usage factor should always be at least 25%
             resize(items.length / 2);
         }
-        T item = items[indexFirst()];
         items[indexFirst()] = null;
         increaseNextFirst();
         return item;
@@ -118,11 +118,11 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
+        T item = items[indexLast()];
         float ratio = (float) size / items.length;
         if (ratio < 0.25 && items.length >= 16) {
             resize(items.length / 2);
         }
-        T item = items[indexLast()];
         items[indexLast()] = null;
         decreaseNextLast();
         return item;
