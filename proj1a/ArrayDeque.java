@@ -1,8 +1,6 @@
-import java.util.Arrays;
-
-public class ArrayDeque<Item> {
+public class ArrayDeque<T> {
     private int size;
-    private Item[] items;
+    private T[] items;
     private int nextFirst;
     private int nextLast;
 
@@ -10,7 +8,7 @@ public class ArrayDeque<Item> {
         size = 0;
         nextFirst = 7;
         nextLast = 0;
-        items = (Item[]) new Object[8];
+        items = (T[]) new Object[8];
     }
 
     // decrease nextLast when addFirst
@@ -69,9 +67,9 @@ public class ArrayDeque<Item> {
 
     // resize the memory of deque
     private void resize(int capacity) {
-        Item[] a = (Item[]) new Object[capacity];
+        T[] a = (T[]) new Object[capacity];
         int index = indexFirst();
-        if (nextFirst + size > items.length) {
+        if (index + size > items.length) {
             System.arraycopy(items, index, a, 0, size - index);
             System.arraycopy(items, 0, a, size - index, nextLast);
         } else {
@@ -82,7 +80,7 @@ public class ArrayDeque<Item> {
         nextLast = size;
     }
 
-    public void addFirst(Item i) {
+    public void addFirst(T i) {
         if (size == items.length) {
             resize(items.length * 2);
         }
@@ -91,7 +89,7 @@ public class ArrayDeque<Item> {
         decreaseNextFirst();
     }
 
-    public void addLast(Item i) {
+    public void addLast(T i) {
         if (size == items.length) {
             resize(items.length * 2);
         }
@@ -100,31 +98,37 @@ public class ArrayDeque<Item> {
         increaseNextLast();
     }
 
-    public Item removeFirst() {
+    public T removeFirst() {
+        if (isEmpty()) {
+            return null;
+        }
         size -= 1;
         float ratio = (float) size / items.length; // the ratio of usage
         if (ratio < 0.25 && items.length >= 16) { // the usage factor should always be at least 25%
             resize(items.length / 2);
         }
-        Item item = items[indexFirst()];
+        T item = items[indexFirst()];
         items[indexFirst()] = null;
         increaseNextFirst();
         return item;
     }
 
-    public Item removeLast() {
+    public T removeLast() {
+        if (isEmpty()) {
+            return null;
+        }
         size -= 1;
         float ratio = (float) size / items.length;
         if (ratio < 0.25 && items.length >= 16) {
             resize(items.length / 2);
         }
-        Item item = items[indexLast()];
+        T item = items[indexLast()];
         items[indexLast()] = null;
         decreaseNextLast();
         return item;
     }
 
-    public Item get(int index) {
+    public T get(int index) {
         if (index > size - 1) {
             return null;
         }
@@ -142,6 +146,12 @@ public class ArrayDeque<Item> {
 
     public boolean isEmpty() {
         return size == 0;
+    }
+
+    public void printDeque() {
+        for (int i = 0; i < size; i++) {
+            System.out.print(get(i) + " ");
+        }
     }
 
 }

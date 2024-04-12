@@ -1,15 +1,15 @@
 public class LinkedListDeque<T> {
     private static class IntNode<T> {
-        public T item;
-        public IntNode<T> prev;
-        public IntNode<T> next;
+        private T item;
+        private IntNode<T> prev;
+        private IntNode<T> next;
 
-        public IntNode () {
+        public IntNode() {
             prev = this;
             next = this;
         }
 
-        public IntNode (T i, IntNode<T> p, IntNode<T> n) {
+        public IntNode(T i, IntNode<T> p, IntNode<T> n) {
             item = i;
             prev = p;
             next = n;
@@ -22,13 +22,13 @@ public class LinkedListDeque<T> {
     // create an empty deque
     public LinkedListDeque() {
         size = 0;
-        sentinel = new IntNode<> ();
+        sentinel = new IntNode<>();
     };
 
     public void addFirst(T item) {
         size += 1;
         IntNode<T> ptr = sentinel.next;
-        sentinel.next = new IntNode<> (item, ptr.prev, sentinel.next);
+        sentinel.next = new IntNode<>(item, ptr.prev, sentinel.next);
         ptr.prev = sentinel.next;
     }
 
@@ -46,7 +46,7 @@ public class LinkedListDeque<T> {
     public void addLast(T item) {
         size += 1;
         IntNode<T> ptr = sentinel.prev;
-        sentinel.prev = new IntNode<> (item, sentinel.prev, ptr.next);
+        sentinel.prev = new IntNode<>(item, sentinel.prev, ptr.next);
         ptr.next = sentinel.prev;
     }
 
