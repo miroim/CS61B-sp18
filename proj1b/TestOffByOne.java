@@ -7,28 +7,25 @@ public class TestOffByOne {
 
     @Test
     public void testEqualChars() {
-        OffByOne obo = new OffByOne();
-        assertTrue(obo.equalChars('a', 'b'));
-        assertTrue(obo.equalChars('r', 'q'));
-        assertFalse(obo.equalChars('a', 'e'));
-        assertFalse(obo.equalChars('a', 'z'));
-        assertFalse(obo.equalChars('a', 'a'));
+        assertTrue(offByOne.equalChars('a', 'b'));
+        assertTrue(offByOne.equalChars('r', 'q'));
+        assertFalse(offByOne.equalChars('a', 'e'));
+        assertFalse(offByOne.equalChars('a', 'z'));
+        assertFalse(offByOne.equalChars('a', 'a'));
 
     }
 
     @Test
     public void testNonChar() {
-        OffByOne obo = new OffByOne();
-        assertTrue(obo.equalChars('&', '%'));
-        assertTrue(obo.equalChars('%', '&'));
-        assertFalse(obo.equalChars('%', '?'));
+        assertTrue(offByOne.equalChars('&', '%'));
+        assertTrue(offByOne.equalChars('%', '&'));
+        assertFalse(offByOne.equalChars('%', '?'));
     }
 
     @Test
     public void testUpperLower() {
-        OffByOne obo = new OffByOne();
-        assertTrue(obo.equalChars('A', 'B'));
-        assertTrue(obo.equalChars('C', 'B'));
-        assertFalse(obo.equalChars('A', 'b'));
+        assertTrue(offByOne.equalChars('A', 'B'));
+        assertTrue(offByOne.equalChars('C', 'B'));
+        assertFalse(offByOne.equalChars('A', 'b'));
     }
 }
