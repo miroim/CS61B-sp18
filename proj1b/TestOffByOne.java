@@ -13,5 +13,22 @@ public class TestOffByOne {
         assertFalse(obo.equalChars('a', 'e'));
         assertFalse(obo.equalChars('a', 'z'));
         assertFalse(obo.equalChars('a', 'a'));
+
+    }
+
+    @Test
+    public void testNonChar() {
+        OffByOne obo = new OffByOne();
+        assertTrue(obo.equalChars('&', '%'));
+        assertTrue(obo.equalChars('%', '&'));
+        assertFalse(obo.equalChars('%', '?'));
+    }
+
+    @Test
+    public void testUpperLower() {
+        OffByOne obo = new OffByOne();
+        assertTrue(obo.equalChars('A', 'B'));
+        assertTrue(obo.equalChars('C', 'B'));
+        assertFalse(obo.equalChars('A', 'b'));
     }
 }

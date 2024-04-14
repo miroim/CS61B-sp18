@@ -119,7 +119,8 @@ public interface Deque<T> {
             }
             T item = items[indexFirst()];
             float ratio = (float) size / items.length; // the ratio of usage
-            if (ratio < 0.25 && items.length >= 16) { // the usage factor should always be at least 25%
+            // the usage factor should always be at least 25%
+            if (ratio < 0.25 && items.length >= 16) {
                 resize(items.length / 2);
             }
             size -= 1;
