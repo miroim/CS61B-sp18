@@ -7,7 +7,7 @@ public class GuitarHero {
         // create guitar string for each keyboard
         String keyboard = "q2we4r5ty7u8i9op-[=zxdcfvgbnjmk,.;/' ";
         GuitarString[] strings = new GuitarString[37];
-        for (int i = 0; i < 37; i+=1 ) {
+        for (int i = 0; i < 37; i += 1) {
             strings[i] = new GuitarString(440 * Math.pow(2, (double) (i - 24) / 12));
         }
 
@@ -17,7 +17,10 @@ public class GuitarHero {
             if (StdDraw.hasNextKeyTyped()) {
                 char key = StdDraw.nextKeyTyped();
                 int keyIndex = keyboard.indexOf(key);
-                if (keyIndex < 0) continue; // unexpected key
+                // unexpected key
+                if (keyIndex < 0) {
+                    continue;
+                }
                 strings[keyIndex].pluck();
             }
 
