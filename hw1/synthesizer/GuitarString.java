@@ -3,7 +3,7 @@ package synthesizer;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GuitarString<T> {
+public class GuitarString {
     /** Constants. Do not change. In case you're curious, the keyword final means
      * the values cannot be changed at runtime. We'll discuss this and other topics
      * in lecture on Friday. */
