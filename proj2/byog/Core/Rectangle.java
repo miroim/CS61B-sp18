@@ -15,28 +15,25 @@ public class Rectangle {
         height = h;
     }
 
-    public static boolean isPointOverlapRectangle(Position p, Rectangle a) {
-        return (p.x >= a.position.x && p.x <= a.position.x + a.width
-                && p.y >= a.position.y && p.y <= a.position.y + a.height);
-    }
-
-    public boolean isOverlap(Rectangle b) {
+    public boolean isOverlap(Rectangle a) {
         /*
-                bLeftTop       bRightTop
-                        ┏━━━━━┓
-                        ┃  b  ┃
-                        ┗━━━━━┛
-             b.position       bRightBottom
+
+                                ┏━━━━━━━━━━━━━━━┓
+                                ┃        end    ┃  <- this
+                        ┏━━━━━━━━━━━━━━━┓       ┃
+                   a->  ┃       ┃       ┃       ┃
+                        ┃       ┗━━━━━━━┃━━━━━━━┛
+                        ┃     start     ┃
+                        ┗━━━━━━━━━━━━━━━┛
          */
+        // calculate the intersection with two rectangle
+        int startX = Math.max(this.position.getX(), a.position.getX());
+        int startY = Math.max(this.position.getY(), a.position.getY());
+        int endX = Math.min(this.position.getX() + this.width, a.position.getX() + a.width);
+        int endY = Math.min(this.position.getY() + this.height, a.position.getY() + a.height);
 
-        Position bLeftTop = new Position(b.position.x, b.position.y + b.height);
-        Position bRightTop = new Position(b.position.x + b.width, b.position.y + b.height);
-        Position bRightBottom = new Position(b.position.x + b.width, b.position.y);
-
-        return isPointOverlapRectangle(b.position, this)
-                || isPointOverlapRectangle(bLeftTop, this)
-                || isPointOverlapRectangle(bRightTop, this)
-                || isPointOverlapRectangle(bRightBottom, this);
+        // check if the intersection is empty
+        return startX <= endX && startY <= endY;
     }
 
 }
