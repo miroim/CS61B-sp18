@@ -30,6 +30,13 @@ public class TestRectangle {
         assertFalse(r1.isOverlap(r4));
         assertTrue(r5.isOverlap(r6));
         assertTrue(r6.isOverlap(r5));
+    }
 
+    @Test
+    public void testIsOutOfBound() {
+        Rectangle r1 = new Rectangle(new Position(43, -5),7 ,5 );
+        Rectangle r2 = new Rectangle(new Position(43, 5),7 ,5 );
+        assertTrue(r1.isOutOfBound());
+        assertFalse(r2.isOutOfBound());
     }
 }

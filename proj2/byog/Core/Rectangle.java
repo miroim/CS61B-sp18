@@ -1,14 +1,11 @@
 package byog.Core;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class Rectangle {
     public Position position;
     public int width;
     public int height;
 
-    // ┛┗┏ ━┃ ┓ mark for draw rectangle
     public Rectangle(Position p, int w, int h) {
         position = p;
         width = w;
@@ -17,7 +14,6 @@ public class Rectangle {
 
     public boolean isOverlap(Rectangle a) {
         /*
-
                                 ┏━━━━━━━━━━━━━━━┓
                                 ┃        end    ┃  <- this
                         ┏━━━━━━━━━━━━━━━┓       ┃
@@ -34,6 +30,24 @@ public class Rectangle {
 
         // check if the intersection is empty
         return startX <= endX && startY <= endY;
+    }
+
+    public boolean isOutOfBound() {
+        return this.position.getX() + this.width > Game.WIDTH
+                || this.position.getY() + this.height > Game.HEIGHT
+                || this.position.getX() < 0
+                || this.position.getY() < 0;
+    }
+
+    /* use position to represent the relative direction and distance
+    *  positive x is right, negative x is left
+    *  positive y is top, negative y is bottom
+    *   e.g. (4, -7) is in the right bottom side
+    */
+    public Position direction(Rectangle a) {
+        int x = a.position.getX() - this.position.getX();
+        int y = a.position.getY() - this.position.getY();
+        return new Position(x, y);
     }
 
 }

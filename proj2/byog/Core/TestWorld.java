@@ -7,9 +7,6 @@ import byog.TileEngine.Tileset;
 import java.util.Random;
 
 public class TestWorld {
-    private static final long SEED = 313;
-    private static final Random RANDOM = new Random(SEED);
-
 
 //    public static void leftTopCorner(TETile[][] world, Position p) {
 //        /* generate leftTopCorner
@@ -76,15 +73,14 @@ public class TestWorld {
 //    }
 
     public static void addRoom(TETile[][] world, Rectangle rect) {
-
-        for (int i = rect.position.getY(); i < rect.position.getY() + rect.width; i += 1) {
-            for (int j = rect.position.getX() + 1; j < rect.position.getX() + rect.height - 1; j += 1) {
+        for (int i = rect.position.getY(); i < rect.position.getY() + rect.height; i += 1) {
+            for (int j = rect.position.getX() + 1; j < rect.position.getX() + rect.width - 1; j += 1) {
                 world[j][i] = Tileset.FLOOR;
                 world[j][rect.position.getY()] = Tileset.WALL;
-                world[j][rect.position.getY() + rect.width - 1] = Tileset.WALL;
+                world[j][rect.position.getY() + rect.height - 1] = Tileset.WALL;
             }
             world[rect.position.getX()][i] = Tileset.WALL;
-            world[rect.position.getX() + rect.height - 1][i] = Tileset.WALL;
+            world[rect.position.getX() + rect.width - 1][i] = Tileset.WALL;
         }
     }
 
