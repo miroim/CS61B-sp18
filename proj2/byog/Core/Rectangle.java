@@ -2,14 +2,26 @@ package byog.Core;
 
 
 public class Rectangle {
-    public Position position;
-    public int width;
-    public int height;
+    private final Position position;
+    private final int width;
+    private final int height;
 
     public Rectangle(Position p, int w, int h) {
         position = p;
         width = w;
         height = h;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public Position getPosition() {
+        return position;
     }
 
     public boolean isOverlap(Rectangle a) {
@@ -44,10 +56,45 @@ public class Rectangle {
     *  positive y is top, negative y is bottom
     *   e.g. (4, -7) is in the right bottom side
     */
-    public Position direction(Rectangle a) {
-        int x = a.position.getX() - this.position.getX();
-        int y = a.position.getY() - this.position.getY();
+    public Position getRelPosition(Rectangle a) {
+        int offsetX = a.position.getX() - this.position.getX();
+        int offsetY = a.position.getY() - this.position.getY();
+        int x, y;
+        if (offsetX == 0) {
+            if (offsetY > 0) {
+                x = offsetX;
+                y = offsetY - this.height;
+            } else {
+                x = offsetX;
+                y = offsetY + a.height;
+            }
+        } else if (offsetY == 0) {
+            if (offsetX > 0) {
+                x = offsetX - this.width;
+                y = offsetY;
+            } else {
+                x = offsetX + a.width;
+                y = offsetY;
+            }
+        } else if (offsetX > 0) {
+            if (offsetY > 0) {
+                x = offsetX - this.width;
+                y = offsetY - this.height;
+            } else {
+                x = offsetX - this.width;
+                y = offsetY + a.height;
+            }
+        } else {
+            if (offsetY > 0) {
+                x = offsetX + a.width;
+                y = offsetY - this.height;
+            } else {
+                x = offsetX + a.width;
+                y = offsetY + a.height;
+            }
+        }
         return new Position(x, y);
     }
+
 
 }

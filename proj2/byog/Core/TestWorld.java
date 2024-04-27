@@ -73,14 +73,24 @@ public class TestWorld {
 //    }
 
     public static void addRoom(TETile[][] world, Rectangle rect) {
-        for (int i = rect.position.getY(); i < rect.position.getY() + rect.height; i += 1) {
-            for (int j = rect.position.getX() + 1; j < rect.position.getX() + rect.width - 1; j += 1) {
+        for (int i = rect.getPosition().getY(); i < rect.getPosition().getY() + rect.getHeight(); i += 1) {
+            for (int j = rect.getPosition().getX() + 1; j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
                 world[j][i] = Tileset.FLOOR;
-                world[j][rect.position.getY()] = Tileset.WALL;
-                world[j][rect.position.getY() + rect.height - 1] = Tileset.WALL;
+                world[j][rect.getPosition().getY()] = Tileset.WALL;
+                world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
             }
-            world[rect.position.getX()][i] = Tileset.WALL;
-            world[rect.position.getX() + rect.width - 1][i] = Tileset.WALL;
+            world[rect.getPosition().getX()][i] = Tileset.WALL;
+            world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
+        }
+    }
+
+    public static void addHall(TETile[][] world, Rectangle a, Rectangle b) {
+        Position p = a.getRelPosition(b);
+        Position hHallPosition = new Position(p.getX() + a.getWidth(), a.getPosition().getY());
+        for (int i = a.getPosition().getX() + a.getWidth();
+             i < a.getPosition().getX() + a.getWidth() + p.getX(); i += 1) {
+            world[i][a.getPosition().getY()] = Tileset.WALL;
+            world[i][a.getPosition().getY() + 2] = Tileset.WALL;
         }
     }
 
@@ -97,10 +107,11 @@ public class TestWorld {
             }
         }
         World w = new World();
-        w.addRandomRectangle();
-        for (Rectangle rect : w.rectList) {
+        w.addRandomRoom();
+        for (Rectangle rect : w.roomList) {
             addRoom(world, rect);
         }
+        addHall(world, w.roomList.get(1), w.roomList.get(2));
 
         ter.renderFrame(world);
     }

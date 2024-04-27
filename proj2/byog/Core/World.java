@@ -7,15 +7,15 @@ import java.util.List;
 public class World {
     private static final long SEED = 3333;
     private static final Random RANDOM = new Random(SEED);
-    public List<Rectangle> rectList;
+    public List<Rectangle> roomList;
     private final int num = RandomUtils.uniform(RANDOM, 5, 10);
 
     public World() {
-        rectList = new ArrayList<Rectangle>();
+        roomList = new ArrayList<Rectangle>();
     }
 
     // use random size rectangle to stand room
-    public Rectangle randomSizeRectangle() {
+    public Rectangle randomSizeRoom() {
         /* If the list of rectangle is not empty,
          * generate next rectangle according to last one
          *
@@ -27,8 +27,8 @@ public class World {
         int max = 8;
         Rectangle rectangle;
         do {
-            if (!rectList.isEmpty()) {
-                lastRect = rectList.get(rectList.size() - 1);
+            if (!roomList.isEmpty()) {
+                lastRect = roomList.get(roomList.size() - 1);
             }
             if (lastRect != null) {
             /* offsetX and offsetY both random return -1, 0, 1
@@ -38,8 +38,8 @@ public class World {
                 int offsetX = RandomUtils.uniform(RANDOM, -1, 2);
                 int offsetY = RandomUtils.uniform(RANDOM, -1, 2);
 
-                x = lastRect.position.getX() + offsetX * (lastRect.width * 2);
-                y = lastRect.position.getY() + offsetY * (lastRect.height * 2);
+                x = lastRect.getPosition().getX() + offsetX * (lastRect.getWidth() * 2);
+                y = lastRect.getPosition().getY() + offsetY * (lastRect.getHeight() * 2);
             } else {
                 x = RandomUtils.uniform(RANDOM, Game.WIDTH - max);
                 y = RandomUtils.uniform(RANDOM, Game.HEIGHT - max);
@@ -51,33 +51,34 @@ public class World {
         return rectangle;
     }
 
-    public void addRandomRectangle() {
+    public void addRandomRoom() {
         for (int i = 0; i < num; i++) {
-            Rectangle newRect = randomSizeRectangle();
+            Rectangle newRect = randomSizeRoom();
 
-            if (rectList.isEmpty()) {
-                rectList.add(newRect);
+            if (roomList.isEmpty()) {
+                roomList.add(newRect);
             } else {
                 boolean overlaps = false;
-                for (Rectangle rect : rectList) {
+                for (Rectangle rect : roomList) {
                     if (rect.isOverlap(newRect)) {
                         overlaps = true;
                         break;
                     }
                 }
                 if (!overlaps) {
-                    rectList.add(newRect);
+                    roomList.add(newRect);
                 }
             }
         }
     }
+
 
     /* generate a horizontal hall by length
         #######
         ·······
         #######
      */
-    public Rectangle horizontalHall(Position p, int length) {
+    public static Rectangle horizontalHall(Position p, int length) {
         return new Rectangle(p, length, 3);
     }
 
@@ -87,7 +88,7 @@ public class World {
         #·#
         #·#
     */
-    public Rectangle verticalHall(Position p, int length) {
+    public static Rectangle verticalHall(Position p, int length) {
         return new Rectangle(p, 3, length);
     }
 }
