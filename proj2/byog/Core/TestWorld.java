@@ -84,15 +84,16 @@ public class TestWorld {
         }
     }
 
-    public static void addHall(TETile[][] world, Rectangle a, Rectangle b) {
-        Position p = a.getRelPosition(b);
-        Position hHallPosition = new Position(p.getX() + a.getWidth(), a.getPosition().getY());
-        for (int i = a.getPosition().getX() + a.getWidth();
-             i < a.getPosition().getX() + a.getWidth() + p.getX(); i += 1) {
-            world[i][a.getPosition().getY()] = Tileset.WALL;
-            world[i][a.getPosition().getY() + 2] = Tileset.WALL;
-        }
-    }
+//    public static void addHall(TETile[][] world, Rectangle a, Rectangle b) {
+//        Rectangle hall = a.getRelPosition(b);
+//
+////        Position hHallPosition = new Position(p.getX() + a.getWidth(), a.getPosition().getY());
+//        for (int i = a.getPosition().getX() + a.getWidth();
+//             i < a.getPosition().getX() + a.getWidth() + p.getX(); i += 1) {
+//            world[i][a.getPosition().getY()] = Tileset.WALL;
+//            world[i][a.getPosition().getY() + 2] = Tileset.WALL;
+//        }
+//    }
 
 
     public static void main(String[] args) {
@@ -108,10 +109,11 @@ public class TestWorld {
         }
         World w = new World();
         w.addRandomRoom();
-        for (Rectangle rect : w.roomList) {
+//        System.out.println(h.getPosition().getX() + " " + h.getPosition().getY() + " " + h.getWidth() +" "+ h.getHeight());
+        for (Rectangle rect : w.rectList) {
             addRoom(world, rect);
         }
-        addHall(world, w.roomList.get(1), w.roomList.get(2));
+
 
         ter.renderFrame(world);
     }
