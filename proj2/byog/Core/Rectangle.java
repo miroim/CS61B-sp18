@@ -1,11 +1,5 @@
 package byog.Core;
 
-
-import com.sun.org.apache.regexp.internal.RE;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Rectangle {
     private final Position position;
     private final int width;
@@ -27,6 +21,11 @@ public class Rectangle {
 
     public Position getPosition() {
         return position;
+    }
+
+    public double distance(Rectangle a) {
+        return Math.sqrt(Math.pow(this.position.getX() - a.position.getX(), 2)
+                            + Math.pow(this.position.getY() - a.position.getY(), 2));
     }
 
     public boolean isOverlap(Rectangle a) {
@@ -56,59 +55,14 @@ public class Rectangle {
                 || this.position.getY() < 0;
     }
 
-    /* use position to represent the relative direction and distance
-    *  positive x is right, negative x is left
-    *  positive y is top, negative y is bottom
-    *   e.g. (4, -7) is in the right bottom side
-    */
-    public Rectangle getRelPosition(Rectangle a) {
-//        List<Rectangle> hallList = new ArrayList<Rectangle>();
-        int offsetX = a.position.getX() - this.position.getX();
-        int offsetY = a.position.getY() - this.position.getY();
-        int x, y, width, height;
-        if (offsetX == 0) {
-            x = this.getPosition().getX();
-            width = 3;
-            if (offsetY > 0) {
-                y = this.getPosition().getY() + this.getHeight() - 1;
-                height = offsetY - this.getHeight() + 2;
-            } else {
-                y = a.getPosition().getY() + a.getHeight() - 1;
-                height = Math.abs(offsetY) - a.getHeight() + 2;
-            }
-            return new Rectangle(new Position(x, y), width, height);
-//            hallList.add(new Rectangle(new Position(x, y), width, height));
-        } else {
-            y = this.getPosition().getY();
-            height = 3;
-            if (offsetX > 0) {
-                x = this.getPosition().getX() + this.getWidth() - 1;
-                width = offsetX - this.getWidth() + 2;
-            } else {
-                x = a.getPosition().getX() + a.getWidth() - 1;
-                width = Math.abs(offsetX) - a.getWidth() + 2;
-            }
-            return new Rectangle(new Position(x, y), width, height);
-//            hallList.add(new Rectangle(new Position(x, y), width, height));
-        }
-//        } else if (offsetX > 0) {
-//            if (offsetY > 0) {
-//                x = offsetX - this.width;
-//                y = offsetY - this.height;
-//            } else {
-//                x = offsetX - this.width;
-//                y = offsetY + a.height;
-//            }
-//        } else {
-//            if (offsetY > 0) {
-//                x = offsetX + a.width;
-//                y = offsetY - this.height;
-//            } else {
-//                x = offsetX + a.width;
-//                y = offsetY + a.height;
-//            }
-//        }
-//        return rect;
+    // return position y of top side
+    public int getTopSide() {
+        return this.position.getY() + this.height;
+    }
+
+    // return position x of right side
+    public int getRightSide() {
+        return this.position.getX() + this.width;
     }
 
 

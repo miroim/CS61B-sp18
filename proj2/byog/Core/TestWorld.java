@@ -4,96 +4,44 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestWorld {
 
-//    public static void leftTopCorner(TETile[][] world, Position p) {
-//        /* generate leftTopCorner
-//         *
-//         *         #·#
-//         *         ··#
-//         *         ###
-//         */
-//        for (int i = p.x; i < p.x + 3; i += 1) {
-//            world[i][p.y] = Tileset.WALL;
-//            world[i][p.y + 1] = Tileset.FLOOR;
-//            world[i][p.y + 2] = Tileset.WALL;
-//        }
-//        world[p.x + 2][p.y + 1] = Tileset.WALL;
-//        world[p.x + 1][p.y + 2] = Tileset.FLOOR;
-//    }
-//
-//    public static void leftBottomCorner(TETile[][] world, Position p) {
-//        /* generate leftBottomCorner
-//         *
-//         *         ###
-//         *         ··#
-//         *         #·#
-//         */
-//        for (int i = p.x; i < p.x + 3; i += 1) {
-//            world[i][p.y] = Tileset.WALL;
-//            world[i][p.y + 1] = Tileset.FLOOR;
-//            world[i][p.y + 2] = Tileset.WALL;
-//        }
-//        world[p.x + 2][p.y + 1] = Tileset.WALL;
-//        world[p.x + 1][p.y] = Tileset.FLOOR;
-//    }
-//
-//    public static void rightTopCorner(TETile[][] world, Position p) {
-//        /* generate leftBottomCorner
-//         *
-//         *         #·#
-//         *         #··
-//         *         ###
-//         */
-//        for (int i = p.x; i < p.x + 3; i += 1) {
-//            world[i][p.y] = Tileset.WALL;
-//            world[i][p.y + 1] = Tileset.FLOOR;
-//            world[i][p.y + 2] = Tileset.WALL;
-//        }
-//        world[p.x][p.y + 1] = Tileset.WALL;
-//        world[p.x + 1][p.y + 2] = Tileset.FLOOR;
-//    }
-//
-//    public static void rightBottomCorner(TETile[][] world, Position p) {
-//        /* generate leftBottomCorner
-//         *
-//         *         ###
-//         *         #··
-//         *         #·#
-//         */
-//        for (int i = p.x; i < p.x + 3; i += 1) {
-//            world[i][p.y] = Tileset.WALL;
-//            world[i][p.y + 1] = Tileset.FLOOR;
-//            world[i][p.y + 2] = Tileset.WALL;
-//        }
-//        world[p.x][p.y + 1] = Tileset.WALL;
-//        world[p.x + 1][p.y] = Tileset.FLOOR;
-//    }
-
     public static void addRoom(TETile[][] world, Rectangle rect) {
         for (int i = rect.getPosition().getY(); i < rect.getPosition().getY() + rect.getHeight(); i += 1) {
-            for (int j = rect.getPosition().getX() + 1; j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
+            for (int j = rect.getPosition().getX(); j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
                 world[j][i] = Tileset.FLOOR;
-                world[j][rect.getPosition().getY()] = Tileset.WALL;
-                world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
+
+                if (rect.getWidth() != 3 || (rect.getHeight() == 3 && rect.getWidth() == 3)) {
+                    world[j][rect.getPosition().getY()] = Tileset.WALL;
+                    world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
+                }
             }
-            world[rect.getPosition().getX()][i] = Tileset.WALL;
-            world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
+            if (rect.getHeight() != 3 || (rect.getHeight() == 3 && rect.getWidth() == 3)) {
+                world[rect.getPosition().getX()][i] = Tileset.WALL;
+                world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
+            }
         }
     }
 
-//    public static void addHall(TETile[][] world, Rectangle a, Rectangle b) {
-//        Rectangle hall = a.getRelPosition(b);
-//
-////        Position hHallPosition = new Position(p.getX() + a.getWidth(), a.getPosition().getY());
-//        for (int i = a.getPosition().getX() + a.getWidth();
-//             i < a.getPosition().getX() + a.getWidth() + p.getX(); i += 1) {
-//            world[i][a.getPosition().getY()] = Tileset.WALL;
-//            world[i][a.getPosition().getY() + 2] = Tileset.WALL;
-//        }
-//    }
+    public static void addHall(TETile[][] world, Rectangle rect) {
+        for (int i = rect.getPosition().getY(); i < rect.getPosition().getY() + rect.getHeight(); i += 1) {
+            for (int j = rect.getPosition().getX(); j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
+                world[j][i] = Tileset.FLOOR;
+                if (rect.getWidth() != 3) {
+                    world[j][rect.getPosition().getY()] = Tileset.WALL;
+                    world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
+                }
+            }
+            if (rect.getHeight() != 3) {
+                world[rect.getPosition().getX()][i] = Tileset.WALL;
+                world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
+            }
+        }
+    }
+
 
 
     public static void main(String[] args) {
@@ -109,10 +57,55 @@ public class TestWorld {
         }
         World w = new World();
         w.addRandomRoom();
-//        System.out.println(h.getPosition().getX() + " " + h.getPosition().getY() + " " + h.getWidth() +" "+ h.getHeight());
+
+        List<Rectangle> r = w.connectRoom(w.rectList);
+        w.rectList.addAll(r);
         for (Rectangle rect : w.rectList) {
             addRoom(world, rect);
         }
+
+        for (Rectangle rect : w.hallWithoutCornerList) {
+            addHall(world, rect);
+        }
+
+//        addRoom(world, w.rectList.get(0));
+//        addRoom(world, w.rectList.get(4));
+//        addRoom(world, w.rectList.get(8));
+//        addRoom(world, w.rectList.get(12));
+//        addRoom(world, w.rectList.get(14));
+//        addRoom(world, w.rectList.get(16));
+//        addRoom(world, w.rectList.get(18));
+//        addRoom(world, w.rectList.get(20));
+//        addRoom(world, w.rectList.get(24));
+//
+//
+//
+//        addRoom(world, w.rectList.get(3));
+//        addRoom(world, w.rectList.get(1));
+//        addRoom(world, w.rectList.get(2));
+//        addRoom(world, w.rectList.get(7));
+//        addRoom(world, w.rectList.get(5));
+//        addRoom(world, w.rectList.get(6));
+//        addRoom(world, w.rectList.get(11));
+//        addRoom(world, w.rectList.get(9));
+//        addRoom(world, w.rectList.get(10));
+//        addRoom(world, w.rectList.get(13));
+//        addRoom(world, w.rectList.get(15));
+//        addRoom(world, w.rectList.get(17));
+//        addRoom(world, w.rectList.get(19));
+//
+//        addRoom(world, w.rectList.get(23));
+//        addRoom(world, w.rectList.get(21));
+//        addRoom(world, w.rectList.get(22));
+
+
+
+
+
+
+
+//        addRoom(world, l.get(1));
+//        addRoom(world, l.get(0));
 
 
         ter.renderFrame(world);
