@@ -20,7 +20,7 @@ public class World {
             or reach the random count of room
      */
 
-    private static final long SEED = 4033;
+    private static final long SEED = 133;
     private static final Random RANDOM = new Random(SEED);
     public List<Rectangle> rectList;
     public List<Rectangle> hallWithoutCornerList;
@@ -41,7 +41,7 @@ public class World {
         Rectangle lastRect = null;
         int x, y, width, height;
         int min = 5;
-        int max = 8;
+        int max = 9;
         Rectangle rectangle;
         do {
             if (!rectList.isEmpty()) {
@@ -96,15 +96,15 @@ public class World {
 
     public List<Rectangle> connectRoom(List<Rectangle> roomList) {
         List<Rectangle> result = new ArrayList<>();
-        List<Rectangle> temp = roomList;
         // choose a random room
-        int index = RandomUtils.uniform(RANDOM, temp.size());
-        Rectangle startRoom = temp.get(index);
+//        int index = RandomUtils.uniform(RANDOM, roomList.size());
+//        Rectangle startRoom = roomList.get(index);
         for (Rectangle rect : rectList) {
-            if (startRoom.distance(rect) < 12) {
-                result.addAll(getHall(startRoom, rect));
-            }
+            result.addAll(getHall(rect, rect.minDistance(rectList)));
         }
+//        for (int i = 0; i < roomList.size() - 1; i += 1) {
+//            result.addAll(getHall(roomList.get(i), roomList.get(i + 1)));
+//        }
         return result;
     }
 

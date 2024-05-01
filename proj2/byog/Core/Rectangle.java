@@ -1,5 +1,7 @@
 package byog.Core;
 
+import java.util.List;
+
 public class Rectangle {
     private final Position position;
     private final int width;
@@ -26,6 +28,20 @@ public class Rectangle {
     public double distance(Rectangle a) {
         return Math.sqrt(Math.pow(this.position.getX() - a.position.getX(), 2)
                             + Math.pow(this.position.getY() - a.position.getY(), 2));
+    }
+
+    public Rectangle minDistance(List<Rectangle> rectList) {
+        int index = 0;
+        double minDistance = Double.MAX_VALUE;
+        for (int i = 0; i < rectList.size() - 1; i += 1) {
+            double curDistance = this.distance(rectList.get(i));
+            if (curDistance < minDistance && curDistance != 0) {
+                minDistance = curDistance;
+                index = i;
+            }
+        }
+        System.out.println(index);
+        return rectList.get(index);
     }
 
     public boolean isOverlap(Rectangle a) {

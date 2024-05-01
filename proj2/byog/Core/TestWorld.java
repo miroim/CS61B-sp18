@@ -56,57 +56,43 @@ public class TestWorld {
             }
         }
         World w = new World();
-        w.addRandomRoom();
+//        w.addRandomRoom();
 
-        List<Rectangle> r = w.connectRoom(w.rectList);
-        w.rectList.addAll(r);
-        for (Rectangle rect : w.rectList) {
-            addRoom(world, rect);
-        }
+//        List<Rectangle> r = w.connectRoom(w.rectList);
+//        w.rectList.addAll(r);
+//        for (Rectangle rect : w.rectList) {
+//            addRoom(world, rect);
+//        }
+//
+//        for (Rectangle rect : w.hallWithoutCornerList) {
+//            addHall(world, rect);
+//        }
 
-        for (Rectangle rect : w.hallWithoutCornerList) {
-            addHall(world, rect);
-        }
 
-//        addRoom(world, w.rectList.get(0));
-//        addRoom(world, w.rectList.get(4));
-//        addRoom(world, w.rectList.get(8));
-//        addRoom(world, w.rectList.get(12));
-//        addRoom(world, w.rectList.get(14));
-//        addRoom(world, w.rectList.get(16));
-//        addRoom(world, w.rectList.get(18));
-//        addRoom(world, w.rectList.get(20));
-//        addRoom(world, w.rectList.get(24));
 //
-//
-//
-//        addRoom(world, w.rectList.get(3));
-//        addRoom(world, w.rectList.get(1));
-//        addRoom(world, w.rectList.get(2));
-//        addRoom(world, w.rectList.get(7));
-//        addRoom(world, w.rectList.get(5));
-//        addRoom(world, w.rectList.get(6));
-//        addRoom(world, w.rectList.get(11));
-//        addRoom(world, w.rectList.get(9));
+//        w.rectList.addAll(w.getHall(w.rectList.get(0), w.rectList.get(0).minDistance(w.rectList)));
 //        addRoom(world, w.rectList.get(10));
-//        addRoom(world, w.rectList.get(13));
-//        addRoom(world, w.rectList.get(15));
-//        addRoom(world, w.rectList.get(17));
-//        addRoom(world, w.rectList.get(19));
 //
-//        addRoom(world, w.rectList.get(23));
-//        addRoom(world, w.rectList.get(21));
-//        addRoom(world, w.rectList.get(22));
+//        w.rectList.addAll(w.getHall(w.rectList.get(1), w.rectList.get(1).minDistance(w.rectList)));
+//        addRoom(world, w.rectList.get(11));
+//
+//        Rectangle a = w.rectList.get(2).minDistance(w.rectList);
+//        w.rectList.addAll(w.getHall(w.rectList.get(2),a));
+//
+//        addRoom(world, w.rectList.get(12));
+//        addRoom(world, w.rectList.get(13));
+//        addRoom(world, w.rectList.get(14));
+//        addRoom(world, w.rectList.get(15));
 
 
-
-
-
-
-
-//        addRoom(world, l.get(1));
-//        addRoom(world, l.get(0));
-
+//        w.rectList.addAll(w.getHall(w.rectList.get(2), w.rectList.get(3)));
+//        addRoom(world, w.rectList.get(12));
+        Rectangle b = new Rectangle(new Position(71, 2), 8, 7);
+        Rectangle c = new Rectangle(new Position(62, 3), 5, 6);
+        addRoom(world, b);
+        addRoom(world, c);
+        w.rectList.addAll(w.getHall(b, c));
+        addRoom(world, w.getHall(b, c).get(0));
 
         ter.renderFrame(world);
     }
