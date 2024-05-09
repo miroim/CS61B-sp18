@@ -71,15 +71,31 @@ public class Rectangle {
                 || this.position.getY() < 0;
     }
 
-    // return position y of top side
-    public int getTopSide() {
-        return this.position.getY() + this.height;
+    // return position of the midpoint on the top edge of rectangle
+    public Position getTop() {
+        int x = this.position.getX() + this.width / 2;
+        int y = this.position.getY() + this.height;
+        return new Position(x, y);
     }
 
-    // return position x of right side
-    public int getRightSide() {
-        return this.position.getX() + this.width;
+    // return position of the midpoint on the bottom edge of rectangle
+    public Position getBottom() {
+        int x = this.position.getX() + this.width / 2;
+        int y = this.position.getY();
+        return new Position(x, y);
     }
 
+    // return position of the midpoint on the left edge of rectangle
+    public Position getLeft() {
+        int x = this.position.getX();
+        int y = this.position.getY() + this.height / 2;
+        return new Position(x, y);
+    }
 
+    // return position of the midpoint on the right edge of rectangle
+    public Position getRight() {
+        int x = this.position.getX() + this.width;
+        int y = this.position.getY() + this.height / 2;
+        return new Position(x, y);
+    }
 }
