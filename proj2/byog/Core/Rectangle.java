@@ -1,5 +1,6 @@
 package byog.Core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rectangle {
@@ -97,5 +98,56 @@ public class Rectangle {
         int x = this.position.getX() + this.width;
         int y = this.position.getY() + this.height / 2;
         return new Position(x, y);
+    }
+
+    // return the closest two midpoint between two rectangle
+    public static Position[] getClosestMidpoint(Rectangle a, Rectangle b) {
+        /*
+         * 1. Get the midpoint from two rectangle, and separately store them in two array list
+         * 2. Calculate the distance between the midpoint of both rectangle
+         * 3. Find and return the position with minimum distance
+         */
+        List<Position> a_midpoints = new ArrayList<>(4);
+        List<Position> b_midpoints = new ArrayList<>(4);
+        Position[] closest_midpoint = new Position[2];
+        double minimum_distance = Double.MAX_VALUE;
+        a_midpoints.add(a.getLeft());
+        a_midpoints.add(a.getRight());
+        a_midpoints.add(a.getTop());
+        a_midpoints.add(a.getBottom());
+        b_midpoints.add(b.getLeft());
+        b_midpoints.add(b.getRight());
+        b_midpoints.add(b.getTop());
+        b_midpoints.add(b.getBottom());
+        for (Position a_midpoint : a_midpoints) {
+            for (Position b_midpoint : b_midpoints) {
+                double distance = a_midpoint.getDistance(b_midpoint);
+                if (distance < minimum_distance) {
+                    minimum_distance = distance;
+                    closest_midpoint[0] = a_midpoint;
+                    closest_midpoint[1] = b_midpoint;
+                }
+            }
+        }
+        return closest_midpoint;
+    }
+
+    // Determining the midpoint in which edge of rectangle
+    public String getEdge(Position m) {
+        Position left = this.getLeft();
+        Position right = this.getRight();
+        Position top = this.getTop();
+        Position bottom = this.getBottom();
+        if (m.equals(left)) {
+            return "left";
+        } else if (m.equals(right)) {
+            return "right";
+        } else if (m.equals(top)) {
+            return "top";
+        } else if (m.equals(bottom)) {
+            return "bottom";
+        } else {
+            return null;
+        }
     }
 }
