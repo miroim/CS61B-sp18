@@ -26,7 +26,7 @@ public class World {
     private final int num = RandomUtils.uniform(RANDOM, 20, 30);
 
     public World() {
-        rectList = new ArrayList<Rectangle>();
+        rectList = new ArrayList<>();
     }
 
     // use random size rectangle to stand room
@@ -178,13 +178,37 @@ public class World {
         return hallList;
     }
 
+    private static List<Rectangle> bottomTop(Rectangle a, Rectangle b) {
+        List<Rectangle> hallList = new ArrayList<>();
+        Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
+        int x;
+
+        // the closest two edge between two rectangle
+        Position a_midpoint = midpoints[0];
+        Position b_midpoint = midpoints[1];
+        int offsetY = b_midpoint.getY() - a_midpoint.getY();
+
+        if (a_midpoint.getX() > b_midpoint.getX()) {
+            x = b_midpoint.getX();
+        } else {
+            x = a_midpoint.getX();
+        }
+
+        hallList.add(verticalHall(a_midpoint, offsetY / 2));
+
+        Position p = new Position(b_midpoint.getX(), a_midpoint.getY() + offsetY / 2 + 1);
+        hallList.add(verticalHall(p, offsetY / 2 + 2));
+
+        Position p1 = new Position(x, a_midpoint.getY() + offsetY / 2 - 1);
+        hallList.add(horizontalHall(p1, Math.abs(b_midpoint.getX() - a_midpoint.getX()) + 3));
+        return hallList;
+    }
+
     /* get hall between two room
      */
     public List<Rectangle> getHall(Rectangle a, Rectangle b) {
         List<Rectangle> hallList = new ArrayList<>();
-        int offsetX = b.getPosition().getX() - a.getPosition().getX();
-        int offsetY = b.getPosition().getY() - a.getPosition().getY();
-        int x, y, width, height;
+
         Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
         // the closest two edge between two rectangle
         Position a_midpoint = midpoints[0];
@@ -197,12 +221,20 @@ public class World {
             } else if (b_edge.equals("bottom") || b_edge.equals("top")) {
                 hallList.addAll(rightBottomOrTop(a, b));
             }
+        } else if (a_edge.equals("top")) {
+            if (b_edge.equals("bottom")) {
+                hallList.addAll(bottomTop(a, b));
+            }
         }
         if (b_edge.equals("right")) {
             if (a_edge.equals("left")) {
                 hallList.addAll(rightLeft(b, a));
-            } else if (a_edge.equals("bottom")) {
+            } else if (a_edge.equals("bottom") || a_edge.equals("top")) {
                 hallList.addAll(rightBottomOrTop(b, a));
+            }
+        } else if (b_edge.equals("top")) {
+            if (a_edge.equals("bottom")) {
+                hallList.addAll(bottomTop(b, a));
             }
         }
 
