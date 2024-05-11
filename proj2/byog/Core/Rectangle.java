@@ -1,7 +1,9 @@
 package byog.Core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Rectangle {
     private final Position position;
@@ -58,8 +60,8 @@ public class Rectangle {
         // calculate the intersection with two rectangle
         int startX = Math.max(this.position.getX(), a.position.getX());
         int startY = Math.max(this.position.getY(), a.position.getY());
-        int endX = Math.min(this.position.getX() + this.width, a.position.getX() + a.width);
-        int endY = Math.min(this.position.getY() + this.height, a.position.getY() + a.height);
+        int endX = Math.min(this.getRight().getX(), a.getRight().getX());
+        int endY = Math.min(this.getTop().getY(), a.getTop().getY());
 
         // check if the intersection is empty
         return startX <= endX && startY <= endY;
@@ -74,29 +76,29 @@ public class Rectangle {
 
     // return position of the midpoint on the top edge of rectangle
     public Position getTop() {
-        int x = this.position.getX() + this.width / 2;
-        int y = this.position.getY() + this.height;
+        int x = this.position.getX() + this.width / 2 - 1;
+        int y = this.position.getY() + this.height - 1;
         return new Position(x, y);
     }
 
     // return position of the midpoint on the bottom edge of rectangle
     public Position getBottom() {
-        int x = this.position.getX() + this.width / 2;
-        int y = this.position.getY();
+        int x = this.position.getX() + this.width / 2 - 1;
+        int y = this.position.getY() - 1;
         return new Position(x, y);
     }
 
     // return position of the midpoint on the left edge of rectangle
     public Position getLeft() {
-        int x = this.position.getX();
-        int y = this.position.getY() + this.height / 2;
+        int x = this.position.getX() - 1;
+        int y = this.position.getY() + this.height / 2 - 1;
         return new Position(x, y);
     }
 
     // return position of the midpoint on the right edge of rectangle
     public Position getRight() {
-        int x = this.position.getX() + this.width;
-        int y = this.position.getY() + this.height / 2;
+        int x = this.position.getX() + this.width - 1;
+        int y = this.position.getY() + this.height / 2 - 1;
         return new Position(x, y);
     }
 
@@ -137,17 +139,44 @@ public class Rectangle {
         Position left = this.getLeft();
         Position right = this.getRight();
         Position top = this.getTop();
-        Position bottom = this.getBottom();
         if (m.equals(left)) {
             return "left";
         } else if (m.equals(right)) {
             return "right";
         } else if (m.equals(top)) {
             return "top";
-        } else if (m.equals(bottom)) {
+        } else{
             return "bottom";
-        } else {
-            return null;
         }
+    }
+
+    // Determine the intersection position list of a list rectangle
+    public static Set<Position> getIntersectionPosition(List<Rectangle> rectList) {
+        Set<Position> floors = new HashSet<>();
+        for (int i = 0; i < rectList.size(); i += 1) {
+            for (int j = i + 1; j < rectList.size(); j += 1) {
+                Rectangle rect1 = rectList.get(i);
+                Rectangle rect2 = rectList.get(j);
+                // Check if overlap between two rectangle
+                if (rect1.isOverlap(rect2)) {
+                    // Determine the border position
+                    int minX = Math.max(rect1.getPosition().getX(), rect2.getPosition().getX());
+                    int maxX = Math.min(rect1.getRight().getX(), rect2.getRight().getX());
+                    int minY = Math.max(rect1.getPosition().getY(), rect2.getPosition().getY());
+                    int maxY = Math.min(rect1.getTop().getY(), rect2.getTop().getY());
+
+                    // Add the intersection or tangency part to floors
+                    for (int x = minX + 1; x < maxX; x += 1) {
+                        floors.add(new Position(x, minY));
+                        floors.add(new Position(x, maxY));
+                    }
+                    for (int y = minY + 1; y < maxY; y += 1) {
+                        floors.add(new Position(minX, y));
+                        floors.add(new Position(maxX, y));
+                    }
+                }
+            }
+        }
+        return floors;
     }
 }
