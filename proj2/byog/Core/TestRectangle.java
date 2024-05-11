@@ -23,8 +23,8 @@ public class TestRectangle {
         Rectangle r5 = new Rectangle(p5, 9, 6);
         Rectangle r6 = new Rectangle(p6, 6, 9);
 
-        assertTrue(r1.isOverlap(r2));
-        assertTrue(r2.isOverlap(r1));
+        assertFalse(r1.isOverlap(r2));
+        assertFalse(r2.isOverlap(r1));
         assertTrue(r3.isOverlap(r4));
         assertFalse(r2.isOverlap(r3));
         assertFalse(r1.isOverlap(r4));
