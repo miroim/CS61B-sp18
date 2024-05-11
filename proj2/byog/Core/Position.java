@@ -24,8 +24,7 @@ public class Position {
 
     // Determining whether two position is equal
 
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Position position) {
+        return this.x == position.x && this.y == position.y;
     }
 }
