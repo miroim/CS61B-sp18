@@ -1,8 +1,8 @@
 package byog.Core;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.List;
+import java.util.Random;
 
 public class World {
     /* @parameter: rectList
@@ -20,7 +20,7 @@ public class World {
             or reach the random count of room
      */
 
-    private static final long SEED = 133;
+    private static final long SEED = 13233;
     private static final Random RANDOM = new Random(SEED);
     public List<Rectangle> rectList;
     private final int num = RandomUtils.uniform(RANDOM, 20, 30);
@@ -92,152 +92,17 @@ public class World {
         }
     }
 
-    public List<Rectangle> connectRoom(List<Rectangle> roomList) {
+    public List<Rectangle> connectAllRoom(List<Rectangle> roomList) {
         List<Rectangle> result = new ArrayList<>();
         // choose a random room
 //        int index = RandomUtils.uniform(RANDOM, roomList.size());
 //        Rectangle startRoom = roomList.get(index);
         for (Rectangle rect : rectList) {
-            result.addAll(getHall(rect, rect.minDistance(rectList)));
+            result.addAll(rect.connect(rect.minDistance(rectList)));
         }
 //        for (int i = 0; i < roomList.size() - 1; i += 1) {
-//            result.addAll(getHall(roomList.get(i), roomList.get(i + 1)));
+//            result.addAll(connect(roomList.get(i), roomList.get(i + 1)));
 //        }
         return result;
-    }
-
-    /* generate a corner
-        ###
-        #·#
-        ###
-     */
-    public static Rectangle corner(Position p) {
-        return new Rectangle(p, 3, 3);
-    }
-
-    /* generate a horizontal hall by length
-        #######
-        ·······
-        #######
-     */
-    public static Rectangle horizontalHall(Position p, int length) {
-        return new Rectangle(p, length, 3);
-    }
-
-    /* generate a vertical hall by length
-        #·#
-        #·#
-        #·#
-        #·#
-    */
-    public static Rectangle verticalHall(Position p, int length) {
-        return new Rectangle(p, 3, length);
-    }
-
-    private static List<Rectangle> rightLeft(Rectangle a, Rectangle b) {
-        List<Rectangle> hallList = new ArrayList<>();
-        Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
-        int y;
-
-        // the closest two edge between two rectangle
-        Position a_midpoint = midpoints[0];
-        Position b_midpoint = midpoints[1];
-        int offsetX = b_midpoint.getX() - a_midpoint.getX();
-
-        if (a_midpoint.getY() > b_midpoint.getY()) {
-            y = b_midpoint.getY();
-        } else {
-            y = a_midpoint.getY();
-        }
-        hallList.add(horizontalHall(a_midpoint, offsetX / 2));
-        Position p = new Position(a_midpoint.getX() + offsetX / 2 + 1,
-                b_midpoint.getY());
-        Position p1 = new Position(a_midpoint.getX() + offsetX / 2 - 1, y);
-        hallList.add(horizontalHall(p, offsetX / 2 + 1));
-        hallList.add(verticalHall(p1, Math.abs(b_midpoint.getY() - a_midpoint.getY()) + 3));
-        return hallList;
-    }
-
-    private static List<Rectangle> rightBottomOrTop(Rectangle a, Rectangle b) {
-        List<Rectangle> hallList = new ArrayList<>();
-        Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
-        int y;
-
-        // the closest two edge between two rectangle
-        Position a_midpoint = midpoints[0];
-        Position b_midpoint = midpoints[1];
-
-        if (a_midpoint.getY() > b_midpoint.getY()) {
-            y = b_midpoint.getY();
-        } else {
-            y = a_midpoint.getY();
-        }
-        hallList.add(horizontalHall(a_midpoint, b_midpoint.getX() - a_midpoint.getX() + 1));
-        Position p = new Position(b_midpoint.getX(), y);
-        hallList.add(verticalHall(p, Math.abs(b_midpoint.getY() - (a_midpoint.getY() + 1)) + 3));
-        return hallList;
-    }
-
-    private static List<Rectangle> bottomTop(Rectangle a, Rectangle b) {
-        List<Rectangle> hallList = new ArrayList<>();
-        Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
-        int x;
-
-        // the closest two edge between two rectangle
-        Position a_midpoint = midpoints[0];
-        Position b_midpoint = midpoints[1];
-        int offsetY = b_midpoint.getY() - a_midpoint.getY();
-
-        if (a_midpoint.getX() > b_midpoint.getX()) {
-            x = b_midpoint.getX();
-        } else {
-            x = a_midpoint.getX();
-        }
-
-        hallList.add(verticalHall(a_midpoint, offsetY / 2));
-
-        Position p = new Position(b_midpoint.getX(), a_midpoint.getY() + offsetY / 2 + 1);
-        hallList.add(verticalHall(p, offsetY / 2 + 2));
-
-        Position p1 = new Position(x, a_midpoint.getY() + offsetY / 2 - 1);
-        hallList.add(horizontalHall(p1, Math.abs(b_midpoint.getX() - a_midpoint.getX()) + 3));
-        return hallList;
-    }
-
-    /* get hall between two room
-     */
-    public List<Rectangle> getHall(Rectangle a, Rectangle b) {
-        List<Rectangle> hallList = new ArrayList<>();
-
-        Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
-        // the closest two edge between two rectangle
-        Position a_midpoint = midpoints[0];
-        Position b_midpoint = midpoints[1];
-        String a_edge = a.getEdge(a_midpoint);
-        String b_edge = b.getEdge(b_midpoint);
-        if (a_edge.equals("right")) {
-            if (b_edge.equals("left")) {
-                hallList.addAll(rightLeft(a, b));
-            } else if (b_edge.equals("bottom") || b_edge.equals("top")) {
-                hallList.addAll(rightBottomOrTop(a, b));
-            }
-        } else if (a_edge.equals("top")) {
-            if (b_edge.equals("bottom")) {
-                hallList.addAll(bottomTop(a, b));
-            }
-        }
-        if (b_edge.equals("right")) {
-            if (a_edge.equals("left")) {
-                hallList.addAll(rightLeft(b, a));
-            } else if (a_edge.equals("bottom") || a_edge.equals("top")) {
-                hallList.addAll(rightBottomOrTop(b, a));
-            }
-        } else if (b_edge.equals("top")) {
-            if (a_edge.equals("bottom")) {
-                hallList.addAll(bottomTop(b, a));
-            }
-        }
-
-        return hallList;
     }
 }
