@@ -14,8 +14,8 @@ public class TestWorld {
         for (int i = rect.getPosition().getY(); i < rect.getPosition().getY() + rect.getHeight(); i += 1) {
             for (int j = rect.getPosition().getX(); j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
                 world[j][i] = Tileset.FLOOR;
-                    world[j][rect.getPosition().getY()] = Tileset.WALL;
-                    world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
+                world[j][rect.getPosition().getY()] = Tileset.WALL;
+                world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
             }
                 world[rect.getPosition().getX()][i] = Tileset.WALL;
                 world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
@@ -47,15 +47,15 @@ public class TestWorld {
             }
         }
         World w = new World();
-//        w.addRandomRoom();
-//
-//        List<Rectangle> r = w.connectRoom(w.rectList);
-//        w.rectList.addAll(r);
-//        addHall1(world, w.rectList);
-
-//        for (Rectangle rect : w.rectList) {
-//            addRoom(world, rect);
-//        }
+        w.addRandomRoom();
+        List<Rectangle> r = w.connectAllRoom(w.rectList);
+        for (Rectangle rr : r) {
+            w.rectList.add(rr);
+            renderAll(world, w.rectList);
+            ter.renderFrame(world);
+        }
+        w.rectList.addAll(r);
+        renderAll(world, w.rectList);
 
 
         Rectangle b = new Rectangle(new Position(40, 2), 8, 7);
@@ -63,24 +63,24 @@ public class TestWorld {
 
 //        Rectangle d = new Rectangle(new Position(40, 2), 8, 7);
 //        Rectangle e = new Rectangle(new Position(54, 20), 5, 6);
-        Rectangle d = new Rectangle(new Position(40, 15), 8, 7);
-        Rectangle e = new Rectangle(new Position(54, 2), 5, 6);
+        Rectangle d = new Rectangle(new Position(40, 16), 8, 7);
+        Rectangle e = new Rectangle(new Position(41, 10), 7, 6);
+        Rectangle f = new Rectangle(new Position(67, 19), 3, 3);
         Position[] midpoints = Rectangle.getClosestMidpoint(d, e);
         // the closest two edge between two rectangle
         Position a_midpoint = midpoints[0];
         Position b_midpoint = midpoints[1];
         String d_edge = d.getEdge(a_midpoint);
         String e_edge = e.getEdge(b_midpoint);
-        System.out.println(d_edge +" "+e_edge);
-
-
-        List<Rectangle> l = new ArrayList<>();
-        l.add(d);
-        l.add(e);
-
-        l.addAll(w.getHall(d, e));
-        renderAll(world, l);
-
-        ter.renderFrame(world);
+//        System.out.println(d_edge +" "+e_edge);
+//        List<Rectangle> l = new ArrayList<>();
+//        l.add(d);
+//        l.add(e);
+//        l.add(f);
+//
+//        l.addAll(d.connect(e));
+//        renderAll(world, l);
+//
+//        ter.renderFrame(world);
     }
 }

@@ -20,7 +20,7 @@ public class World {
             or reach the random count of room
      */
 
-    private static final long SEED = 13233;
+    private static final long SEED = 124433;
     private static final Random RANDOM = new Random(SEED);
     public List<Rectangle> rectList;
     private final int num = RandomUtils.uniform(RANDOM, 20, 30);
@@ -38,7 +38,7 @@ public class World {
          */
         Rectangle lastRect = null;
         int x, y, width, height;
-        int min = 5;
+        int min = 6;
         int max = 9;
         Rectangle rectangle;
         do {
@@ -92,17 +92,42 @@ public class World {
         }
     }
 
+    /* 1. Random pick a room in roomList
+    *  2. connect this room with a minimum distance room in list
+    *  3. connect the minimum distance room with its minimum distance room (not been connected)
+    *  4. repeat step 2. and step 4. until the last room
+    */
     public List<Rectangle> connectAllRoom(List<Rectangle> roomList) {
         List<Rectangle> result = new ArrayList<>();
         // choose a random room
-//        int index = RandomUtils.uniform(RANDOM, roomList.size());
-//        Rectangle startRoom = roomList.get(index);
-        for (Rectangle rect : rectList) {
-            result.addAll(rect.connect(rect.minDistance(rectList)));
+        int index = RandomUtils.uniform(RANDOM, roomList.size());
+        Rectangle startRoom = roomList.get(index);
+        int n = roomList.size() - 1;
+        while (n != 0) {
+            boolean isConnected = startRoom.minDistance(roomList).isConnected();
+            Rectangle minDistanceRoom = startRoom.minDistance(roomList);
+            if (!startRoom.connectedRect.isEmpty()) {
+                startRoom = minDistanceRoom.minPath(startRoom.connectedRect);
+            }
+            result.addAll(startRoom.connect(minDistanceRoom));
+            if (!isConnected) {
+                n -= 1;
+            }
+            startRoom = startRoom.minDistance(roomList);
         }
-//        for (int i = 0; i < roomList.size() - 1; i += 1) {
-//            result.addAll(connect(roomList.get(i), roomList.get(i + 1)));
-//        }
+
+        List<Rectangle> removeList = new ArrayList<>();
+        for (int i = 0; i < result.size(); i += 1) {
+            for (Rectangle rect : result) {
+                Rectangle a = result.get(i);
+                if (a.isCompletelyCoveredBy(rect) && !a.equals(rect)) {
+                    removeList.add(a);
+                }
+            }
+        }
+        for (Rectangle rect : removeList) {
+            result.remove(rect);
+        }
         return result;
     }
 }
