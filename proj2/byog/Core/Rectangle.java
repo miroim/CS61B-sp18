@@ -7,6 +7,7 @@ public class Rectangle {
     private final int width;
     private final int height;
     public List<Rectangle> connectedRect = new ArrayList<>();
+    private boolean isConnected = false;
 
     public Rectangle(Position p, int w, int h) {
         position = p;
@@ -27,14 +28,30 @@ public class Rectangle {
     }
 
     public double distance(Rectangle a) {
-        return Math.sqrt(Math.pow(this.position.getX() - a.position.getX(), 2)
-                            + Math.pow(this.position.getY() - a.position.getY(), 2));
+        Position[] midpoints = getClosestMidpoint(this, a);
+        Position a_midpoint = midpoints[0];
+        Position b_midpoint = midpoints[1];
+        return Math.sqrt(Math.pow(a_midpoint.getX() - b_midpoint.getX(), 2)
+                            + Math.pow(a_midpoint.getY() - b_midpoint.getY(), 2));
     }
 
     public Rectangle minDistance(List<Rectangle> rectList) {
         int index = 0;
         double minDistance = Double.MAX_VALUE;
-        for (int i = 0; i < rectList.size() - 1; i += 1) {
+        for (int i = 0; i < rectList.size(); i += 1) {
+            double curDistance = this.distance(rectList.get(i));
+            if (curDistance < minDistance && curDistance != 0 && !rectList.get(i).isConnected()) {
+                minDistance = curDistance;
+                index = i;
+            }
+        }
+        return rectList.get(index);
+    }
+
+    public Rectangle minPath(List<Rectangle> rectList) {
+        int index = 0;
+        double minDistance = Double.MAX_VALUE;
+        for (int i = 0; i < rectList.size(); i += 1) {
             double curDistance = this.distance(rectList.get(i));
             if (curDistance < minDistance && curDistance != 0) {
                 minDistance = curDistance;
@@ -62,6 +79,18 @@ public class Rectangle {
 
         // check if the intersection is empty
         return startX <= endX && startY <= endY;
+    }
+
+    public boolean isCompletelyCoveredBy(Rectangle other) {
+        // Check if the rectangles have a length or width of 3
+        if (width == 3 && other.width == 3 || (height == 3 && other.height == 3)) {
+            // Check if the current rectangle is completely covered by the other rectangle
+            return other.position.getX() <= position.getX() &&
+                    other.position.getY() <= position.getY() &&
+                    other.position.getX() + other.width >= position.getX() + width &&
+                    other.position.getY() + other.height >= position.getY() + height;
+        }
+        return false;
     }
 
     public boolean isOutOfBound() {
@@ -179,8 +208,7 @@ public class Rectangle {
 
     // Determine rectangle is the same as another rectangle
     public boolean equals(Rectangle rect) {
-        if (this == rect) return true;
-        return width == rect.width && height == rect.height && position.equals(rect.position);
+        return position.equals(rect.position) && width == rect.width && height == rect.height ;
     }
 
 
@@ -206,7 +234,6 @@ public class Rectangle {
     private static List<Rectangle> rightLeft(Rectangle a, Rectangle b) {
         List<Rectangle> hallList = new ArrayList<>();
         Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
-        int y;
 
         // the closest two edge between two rectangle
         Position a_midpoint = midpoints[0];
@@ -214,12 +241,8 @@ public class Rectangle {
         int offsetX = b_midpoint.getX() - a_midpoint.getX();
         int offsetY = Math.abs(b_midpoint.getY() - a_midpoint.getY());
 
-        if (a_midpoint.getY() > b_midpoint.getY()) {
-            y = b_midpoint.getY();
-        } else {
-            y = a_midpoint.getY();
-        }
-        if (offsetY < 3) {
+        int y = Math.min(a_midpoint.getY(), b_midpoint.getY());
+        if (offsetY < 4) {
             Position p = new Position(a_midpoint.getX(), y);
             hallList.add(horizontalHall(p, offsetX + 2));
         } else {
@@ -236,17 +259,12 @@ public class Rectangle {
     private static List<Rectangle> rightBottomOrTop(Rectangle a, Rectangle b) {
         List<Rectangle> hallList = new ArrayList<>();
         Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
-        int y;
 
         // the closest two edge between two rectangle
         Position a_midpoint = midpoints[0];
         Position b_midpoint = midpoints[1];
 
-        if (a_midpoint.getY() > b_midpoint.getY()) {
-            y = b_midpoint.getY();
-        } else {
-            y = a_midpoint.getY();
-        }
+        int y = Math.min(a_midpoint.getY(), b_midpoint.getY());
         hallList.add(horizontalHall(a_midpoint, b_midpoint.getX() - a_midpoint.getX() + 1));
         Position p = new Position(b_midpoint.getX(), y);
         hallList.add(verticalHall(p, Math.abs(b_midpoint.getY() - (a_midpoint.getY() + 1)) + 3));
@@ -256,27 +274,21 @@ public class Rectangle {
     private static List<Rectangle> bottomTop(Rectangle a, Rectangle b) {
         List<Rectangle> hallList = new ArrayList<>();
         Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
-        int x;
 
         // the closest two edge between two rectangle
         Position a_midpoint = midpoints[0];
         Position b_midpoint = midpoints[1];
         int offsetX = Math.abs(b_midpoint.getX() - a_midpoint.getX());
         int offsetY = b_midpoint.getY() - a_midpoint.getY();
+        int x = Math.min(a_midpoint.getX(), b_midpoint.getX());
 
-        if (a_midpoint.getX() > b_midpoint.getX()) {
-            x = b_midpoint.getX();
-        } else {
-            x = a_midpoint.getX();
-        }
-
-        if (offsetX < 3) {
-            Position p = new Position(x, a_midpoint.getY());
+        if (offsetX < 4) {
+            Position p = new Position(x + 1, a_midpoint.getY());
             hallList.add(verticalHall(p, offsetY + 2));
         } else {
             hallList.add(verticalHall(a_midpoint, offsetY / 2));
 
-            Position p = new Position(b_midpoint.getX(), a_midpoint.getY() + offsetY / 2 + 1);
+            Position p = new Position(b_midpoint.getX(), a_midpoint.getY() + offsetY / 2);
             hallList.add(verticalHall(p, offsetY / 2 + 2));
 
             Position p1 = new Position(x, a_midpoint.getY() + offsetY / 2 - 1);
@@ -285,11 +297,31 @@ public class Rectangle {
         return hallList;
     }
 
+    private static List<Rectangle> leftTopOrBottom(Rectangle a, Rectangle b) {
+        List<Rectangle> hallList = new ArrayList<>();
+        Position[] midpoints = Rectangle.getClosestMidpoint(a, b);
+
+        // the closest two edge between two rectangle
+        Position a_midpoint = midpoints[0];
+        Position b_midpoint = midpoints[1];
+
+        int y = Math.min(a_midpoint.getY(), b_midpoint.getY());
+        Position p = new Position(b_midpoint.getX() + 2, a_midpoint.getY());
+        hallList.add(horizontalHall(p, a_midpoint.getX() - b_midpoint.getX()));
+        Position p1 = new Position(b_midpoint.getX(), y);
+        hallList.add(verticalHall(p1, Math.abs(b_midpoint.getY() - (a_midpoint.getY() + 1)) + 2));
+
+        return hallList;
+    }
+
     /* get hall between two room
      */
     public List<Rectangle> connect(Rectangle a) {
-        connectedRect.add(a);
         a.connectedRect.add(this);
+        a.connectedRect.add(a);
+        a.connectedRect.addAll(this.connectedRect);
+
+        this.isConnected = true;
 
         List<Rectangle> hallList = new ArrayList<>();
 
@@ -299,6 +331,7 @@ public class Rectangle {
         Position b_midpoint = midpoints[1];
         String a_edge = a.getEdge(a_midpoint);
         String b_edge = this.getEdge(b_midpoint);
+        System.out.println(a_edge +" "+b_edge);
         if (a_edge.equals("right")) {
             if (b_edge.equals("left")) {
                 hallList.addAll(rightLeft(a, this));
@@ -307,6 +340,14 @@ public class Rectangle {
             }
         } else if (a_edge.equals("top")) {
             if (b_edge.equals("bottom")) {
+                hallList.addAll(bottomTop(a, this));
+            }
+        } else if (a_edge.equals("left")) {
+            if (b_edge.equals("bottom") || b_edge.equals("top")) {
+                hallList.addAll(leftTopOrBottom(a, this));
+            }
+        } else if (a_edge.equals("bottom")) {
+            if (b_edge.equals("top")) {
                 hallList.addAll(bottomTop(a, this));
             }
         }
@@ -320,23 +361,18 @@ public class Rectangle {
             if (a_edge.equals("bottom")) {
                 hallList.addAll(bottomTop(this, a));
             }
+        } else if (b_edge.equals("left")) {
+            if (a_edge.equals("bottom") || a_edge.equals("top")) {
+                hallList.addAll(leftTopOrBottom(this, a));
+            }
+        } else {
+            System.out.println("123");
         }
 
         return hallList;
     }
 
     public boolean isConnected() {
-        Set<Rectangle> visited = new HashSet<>();
-        dfs(this, visited);
-        return visited.size() == connectedRect.size();
-    }
-
-    private void dfs(Rectangle current, Set<Rectangle> visited) {
-        visited.add(current);
-        for (Rectangle neighbor : current.connectedRect) {
-            if (!visited.contains(neighbor)) {
-                dfs(neighbor, visited);
-            }
-        }
+        return isConnected;
     }
 }
