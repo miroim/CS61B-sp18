@@ -4,7 +4,6 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -49,38 +48,8 @@ public class TestWorld {
         World w = new World();
         w.addRandomRoom();
         List<Rectangle> r = w.connectAllRoom(w.rectList);
-        for (Rectangle rr : r) {
-            w.rectList.add(rr);
-            renderAll(world, w.rectList);
-            ter.renderFrame(world);
-        }
         w.rectList.addAll(r);
         renderAll(world, w.rectList);
-
-
-        Rectangle b = new Rectangle(new Position(40, 2), 8, 7);
-        Rectangle c = new Rectangle(new Position(62, 10), 5, 6);
-
-//        Rectangle d = new Rectangle(new Position(40, 2), 8, 7);
-//        Rectangle e = new Rectangle(new Position(54, 20), 5, 6);
-        Rectangle d = new Rectangle(new Position(40, 16), 8, 7);
-        Rectangle e = new Rectangle(new Position(41, 10), 7, 6);
-        Rectangle f = new Rectangle(new Position(67, 19), 3, 3);
-        Position[] midpoints = Rectangle.getClosestMidpoint(d, e);
-        // the closest two edge between two rectangle
-        Position a_midpoint = midpoints[0];
-        Position b_midpoint = midpoints[1];
-        String d_edge = d.getEdge(a_midpoint);
-        String e_edge = e.getEdge(b_midpoint);
-//        System.out.println(d_edge +" "+e_edge);
-//        List<Rectangle> l = new ArrayList<>();
-//        l.add(d);
-//        l.add(e);
-//        l.add(f);
-//
-//        l.addAll(d.connect(e));
-//        renderAll(world, l);
-//
-//        ter.renderFrame(world);
+        ter.renderFrame(world);
     }
 }

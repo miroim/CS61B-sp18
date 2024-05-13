@@ -6,8 +6,7 @@ public class Rectangle {
     private final Position position;
     private final int width;
     private final int height;
-    public List<Rectangle> connectedRect = new ArrayList<>();
-    private boolean isConnected = false;
+    public boolean isConnected = false;
 
     public Rectangle(Position p, int w, int h) {
         position = p;
@@ -36,16 +35,16 @@ public class Rectangle {
     }
 
     public Rectangle minDistance(List<Rectangle> rectList) {
-        int index = 0;
+        Rectangle res = null;
         double minDistance = Double.MAX_VALUE;
-        for (int i = 0; i < rectList.size(); i += 1) {
-            double curDistance = this.distance(rectList.get(i));
-            if (curDistance < minDistance && curDistance != 0 && !rectList.get(i).isConnected()) {
+        for (Rectangle rect : rectList) {
+            double curDistance = this.distance(rect);
+            if (curDistance < minDistance && !this.equals(rect) && !rect.isConnected()) {
                 minDistance = curDistance;
-                index = i;
+                res = rect;
             }
         }
-        return rectList.get(index);
+        return res;
     }
 
     public Rectangle minPath(List<Rectangle> rectList) {
@@ -250,7 +249,7 @@ public class Rectangle {
             Position p = new Position(a_midpoint.getX() + offsetX / 2 + 1,
                     b_midpoint.getY());
             Position p1 = new Position(a_midpoint.getX() + offsetX / 2 - 1, y);
-            hallList.add(horizontalHall(p, offsetX / 2 + 2));
+            hallList.add(horizontalHall(p, offsetX - offsetX / 2 + 1));
             hallList.add(verticalHall(p1, Math.abs(b_midpoint.getY() - a_midpoint.getY()) + 3));
         }
         return hallList;
@@ -288,7 +287,7 @@ public class Rectangle {
         } else {
             hallList.add(verticalHall(a_midpoint, offsetY / 2));
 
-            Position p = new Position(b_midpoint.getX(), a_midpoint.getY() + offsetY / 2);
+            Position p = new Position(b_midpoint.getX(), a_midpoint.getY() + offsetY / 2 + 1);
             hallList.add(verticalHall(p, offsetY / 2 + 2));
 
             Position p1 = new Position(x, a_midpoint.getY() + offsetY / 2 - 1);
@@ -309,7 +308,7 @@ public class Rectangle {
         Position p = new Position(b_midpoint.getX() + 2, a_midpoint.getY());
         hallList.add(horizontalHall(p, a_midpoint.getX() - b_midpoint.getX()));
         Position p1 = new Position(b_midpoint.getX(), y);
-        hallList.add(verticalHall(p1, Math.abs(b_midpoint.getY() - (a_midpoint.getY() + 1)) + 2));
+        hallList.add(verticalHall(p1, Math.abs(b_midpoint.getY() - (a_midpoint.getY() + 1)) + 3));
 
         return hallList;
     }
@@ -317,12 +316,7 @@ public class Rectangle {
     /* get hall between two room
      */
     public List<Rectangle> connect(Rectangle a) {
-        a.connectedRect.add(this);
-        a.connectedRect.add(a);
-        a.connectedRect.addAll(this.connectedRect);
-
-        this.isConnected = true;
-
+        a.isConnected = true;
         List<Rectangle> hallList = new ArrayList<>();
 
         Position[] midpoints = Rectangle.getClosestMidpoint(a, this);
@@ -331,7 +325,6 @@ public class Rectangle {
         Position b_midpoint = midpoints[1];
         String a_edge = a.getEdge(a_midpoint);
         String b_edge = this.getEdge(b_midpoint);
-        System.out.println(a_edge +" "+b_edge);
         if (a_edge.equals("right")) {
             if (b_edge.equals("left")) {
                 hallList.addAll(rightLeft(a, this));
@@ -348,7 +341,7 @@ public class Rectangle {
             }
         } else if (a_edge.equals("bottom")) {
             if (b_edge.equals("top")) {
-                hallList.addAll(bottomTop(a, this));
+                hallList.addAll(bottomTop(this, a));
             }
         }
         if (b_edge.equals("right")) {
@@ -365,14 +358,18 @@ public class Rectangle {
             if (a_edge.equals("bottom") || a_edge.equals("top")) {
                 hallList.addAll(leftTopOrBottom(this, a));
             }
-        } else {
-            System.out.println("123");
         }
-
         return hallList;
     }
 
     public boolean isConnected() {
         return isConnected;
+    }
+
+    public void print() {
+        System.out.println("(x: " + position.getX()
+                + ", y: " + position.getY()
+                + ") width: " + width
+                + " height: " + height);
     }
 }

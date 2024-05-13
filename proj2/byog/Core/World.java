@@ -20,7 +20,7 @@ public class World {
             or reach the random count of room
      */
 
-    private static final long SEED = 124433;
+    private static final long SEED = 1234561;
     private static final Random RANDOM = new Random(SEED);
     public List<Rectangle> rectList;
     private final int num = RandomUtils.uniform(RANDOM, 20, 30);
@@ -99,21 +99,27 @@ public class World {
     */
     public List<Rectangle> connectAllRoom(List<Rectangle> roomList) {
         List<Rectangle> result = new ArrayList<>();
-        // choose a random room
-        int index = RandomUtils.uniform(RANDOM, roomList.size());
-        Rectangle startRoom = roomList.get(index);
+        List<Rectangle> connectedRooms = new ArrayList<>();
+        // Choose a random starting room
+        Rectangle currentRoom = roomList.get(RandomUtils.uniform(RANDOM, roomList.size()));
+        connectedRooms.add(currentRoom);
+        currentRoom.isConnected = true;
+
         int n = roomList.size() - 1;
-        while (n != 0) {
-            boolean isConnected = startRoom.minDistance(roomList).isConnected();
-            Rectangle minDistanceRoom = startRoom.minDistance(roomList);
-            if (!startRoom.connectedRect.isEmpty()) {
-                startRoom = minDistanceRoom.minPath(startRoom.connectedRect);
+        while (n > 0) {
+            Rectangle nextRoom = currentRoom.minDistance(roomList);
+            if (!connectedRooms.isEmpty()) {
+                Rectangle temp = nextRoom.minPath(connectedRooms);
+                if (currentRoom.distance(nextRoom) > temp.distance(nextRoom)) {
+                    currentRoom = temp;
+                }
             }
-            result.addAll(startRoom.connect(minDistanceRoom));
-            if (!isConnected) {
+            result.addAll(currentRoom.connect(nextRoom));
+            connectedRooms.add(nextRoom);
+            if (nextRoom.isConnected()) {
                 n -= 1;
             }
-            startRoom = startRoom.minDistance(roomList);
+            currentRoom = nextRoom;
         }
 
         List<Rectangle> removeList = new ArrayList<>();
