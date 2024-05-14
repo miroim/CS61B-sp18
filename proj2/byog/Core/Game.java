@@ -2,6 +2,10 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
+
+import java.util.List;
+import java.util.Set;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -32,7 +36,45 @@ public class Game {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
-        TETile[][] finalWorldFrame = null;
+        ter.initialize(WIDTH, HEIGHT);
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                finalWorldFrame[x][y] = Tileset.NOTHING;
+            }
+        }
+        long seed = Long.parseLong(input.replaceAll("[^0-9]", ""));
+        World world = new World(seed);
+        world.addRandomRoom();
+        List<Rectangle> r = world.connectAllRoom(world.rectList);
+        world.rectList.addAll(r);
+        renderAll(finalWorldFrame, world.rectList);
+        ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
+    }
+
+    private static void addRectangle(TETile[][] world, Rectangle rect) {
+        for (int i = rect.getPosition().getY(); i < rect.getPosition().getY() + rect.getHeight(); i += 1) {
+            for (int j = rect.getPosition().getX(); j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
+                world[j][i] = Tileset.FLOOR;
+                world[j][rect.getPosition().getY()] = Tileset.WALL;
+                world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
+            }
+            world[rect.getPosition().getX()][i] = Tileset.WALL;
+            world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
+        }
+    }
+
+    private static void renderAll(TETile[][] world, List<Rectangle> rectList) {
+        Set<Position> floors = Rectangle.getIntersectionPosition(rectList);
+        for (Rectangle rect : rectList) {
+            addRectangle(world, rect);
+        }
+        // render FLOOR in intersection
+        for (Position floor : floors) {
+            int x = floor.getX();
+            int y = floor.getY();
+            world[x][y] = Tileset.FLOOR;
+        }
     }
 }

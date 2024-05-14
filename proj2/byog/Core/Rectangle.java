@@ -101,7 +101,7 @@ public class Rectangle {
 
     // return position of the midpoint on the top edge of rectangle
     public Position getTop() {
-        int x = this.position.getX() + this.width / 2 - 1;
+        int x = this.position.getX() + this.width / 2 - 2;
         int y = this.position.getY() + this.height - 1;
         return new Position(x, y);
     }
@@ -242,7 +242,7 @@ public class Rectangle {
 
         int y = Math.min(a_midpoint.getY(), b_midpoint.getY());
         if (offsetY < 4) {
-            Position p = new Position(a_midpoint.getX(), y);
+            Position p = new Position(a_midpoint.getX(), y + 1);
             hallList.add(horizontalHall(p, offsetX + 2));
         } else {
             hallList.add(horizontalHall(a_midpoint, offsetX / 2));
@@ -288,7 +288,7 @@ public class Rectangle {
             hallList.add(verticalHall(a_midpoint, offsetY / 2));
 
             Position p = new Position(b_midpoint.getX(), a_midpoint.getY() + offsetY / 2 + 1);
-            hallList.add(verticalHall(p, offsetY / 2 + 2));
+            hallList.add(verticalHall(p, offsetY - offsetY / 2 + 1));
 
             Position p1 = new Position(x, a_midpoint.getY() + offsetY / 2 - 1);
             hallList.add(horizontalHall(p1, Math.abs(b_midpoint.getX() - a_midpoint.getX()) + 3));

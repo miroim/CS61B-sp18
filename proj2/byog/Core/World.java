@@ -20,46 +20,48 @@ public class World {
             or reach the random count of room
      */
 
-    private static final long SEED = 1234561;
-    private static final Random RANDOM = new Random(SEED);
+    private static Random RANDOM;
     public List<Rectangle> rectList;
-    private final int num = RandomUtils.uniform(RANDOM, 20, 30);
+    private final int num;
 
-    public World() {
+    public World(long s) {
+        RANDOM = new Random(s);
         rectList = new ArrayList<>();
+        num = RandomUtils.uniform(RANDOM, 10, 20);
     }
 
     // use random size rectangle to stand room
     public Rectangle randomSizeRoom() {
         /* If the list of rectangle is not empty,
-         * generate next rectangle according to last one
+         * generate next rectangle according to random one in list
          *
          * else random generate first one
          */
-        Rectangle lastRect = null;
+        Rectangle randomRect = null;
         int x, y, width, height;
         int min = 6;
-        int max = 9;
+        int max = 10;
         Rectangle rectangle;
         do {
             if (!rectList.isEmpty()) {
-                lastRect = rectList.get(rectList.size() - 1);
+                int index = RandomUtils.uniform(RANDOM, rectList.size());
+                randomRect = rectList.get(index);
             }
-            if (lastRect != null) {
+            if (randomRect != null) {
             /* offsetX and offsetY both random return -1, 0, 1
                 by using this to control the position of the next rect
              */
 
                 int offsetX = RandomUtils.uniform(RANDOM, -1, 2);
                 int offsetY = RandomUtils.uniform(RANDOM, -1, 2);
-                x = lastRect.getPosition().getX()
+                x = randomRect.getPosition().getX()
                         + offsetX
                         * RandomUtils
-                            .uniform(RANDOM, lastRect.getWidth() + 4,max * 2);
-                y = lastRect.getPosition().getY()
+                            .uniform(RANDOM, randomRect.getWidth() + 4,max * 2);
+                y = randomRect.getPosition().getY()
                         + offsetY
                         * RandomUtils
-                            .uniform(RANDOM, lastRect.getHeight() + 4,max * 2);
+                            .uniform(RANDOM, randomRect.getHeight() + 4,max * 2);
             } else {
                 x = RandomUtils.uniform(RANDOM, Game.WIDTH - max);
                 y = RandomUtils.uniform(RANDOM, Game.HEIGHT - max);
@@ -72,9 +74,8 @@ public class World {
     }
 
     public void addRandomRoom() {
-        for (int i = 0; i < num; i++) {
+        while (num != rectList.size()) {
             Rectangle newRect = randomSizeRoom();
-
             if (rectList.isEmpty()) {
                 rectList.add(newRect);
             } else {
