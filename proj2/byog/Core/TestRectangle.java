@@ -34,17 +34,17 @@ public class TestRectangle {
 
     @Test
     public void testIsOutOfBound() {
-        Rectangle r1 = new Rectangle(new Position(43, -5),7 ,6 );
-        Rectangle r2 = new Rectangle(new Position(43, 5),7 ,6 );
+        Rectangle r1 = new Rectangle(new Position(43, -5),7,6);
+        Rectangle r2 = new Rectangle(new Position(43, 5),7,6);
         assertTrue(r1.isOutOfBound());
         assertFalse(r2.isOutOfBound());
     }
 
     @Test
     public void testEquals() {
-        Rectangle r1 = new Rectangle(new Position(43, 5),7 ,6 );
-        Rectangle r2 = new Rectangle(new Position(43, 5),7 ,6 );
-        Rectangle r3 = new Rectangle(new Position(40, 5),7 ,6 );
+        Rectangle r1 = new Rectangle(new Position(43, 5),7,6);
+        Rectangle r2 = new Rectangle(new Position(43, 5),7,6);
+        Rectangle r3 = new Rectangle(new Position(40, 5),7,6);
         assertTrue(r1.equals(r2));
         assertFalse(r1.equals(r3));
     }

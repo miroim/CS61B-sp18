@@ -32,7 +32,7 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
+        // Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
@@ -46,22 +46,24 @@ public class Game {
         long seed = Long.parseLong(input.replaceAll("[^0-9]", ""));
         World world = new World(seed);
         world.addRandomRoom();
-        List<Rectangle> r = world.connectAllRoom(world.rectList);
-        world.rectList.addAll(r);
-        renderAll(finalWorldFrame, world.rectList);
+        List<Rectangle> r = world.connectAllRoom(world.getRectList());
+        world.rectListAddAll(r);
+        renderAll(finalWorldFrame, world.getRectList());
         ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
 
     private static void addRectangle(TETile[][] world, Rectangle rect) {
-        for (int i = rect.getPosition().getY(); i < rect.getPosition().getY() + rect.getHeight(); i += 1) {
-            for (int j = rect.getPosition().getX(); j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
+        int x = rect.getPosition().getX();
+        int y = rect.getPosition().getY();
+        for (int i = y; i < y + rect.getHeight(); i += 1) {
+            for (int j = x; j < x + rect.getWidth() - 1; j += 1) {
                 world[j][i] = Tileset.FLOOR;
-                world[j][rect.getPosition().getY()] = Tileset.WALL;
-                world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
+                world[j][y] = Tileset.WALL;
+                world[j][y + rect.getHeight() - 1] = Tileset.WALL;
             }
-            world[rect.getPosition().getX()][i] = Tileset.WALL;
-            world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
+            world[x][i] = Tileset.WALL;
+            world[x + rect.getWidth() - 1][i] = Tileset.WALL;
         }
     }
 

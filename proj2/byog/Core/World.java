@@ -21,13 +21,25 @@ public class World {
      */
 
     private static Random RANDOM;
-    public List<Rectangle> rectList;
+    private List<Rectangle> rectList;
     private final int num;
 
     public World(long s) {
         RANDOM = new Random(s);
         rectList = new ArrayList<>();
         num = RandomUtils.uniform(RANDOM, 10, 20);
+    }
+
+    public List<Rectangle> getRectList() {
+        return rectList;
+    }
+
+    public void rectListAdd(Rectangle rectangle) {
+        rectList.add(rectangle);
+    }
+
+    public void rectListAddAll(List<Rectangle> list) {
+        rectList.addAll(list);
     }
 
     // use random size rectangle to stand room
@@ -104,7 +116,7 @@ public class World {
         // Choose a random starting room
         Rectangle currentRoom = roomList.get(RandomUtils.uniform(RANDOM, roomList.size()));
         connectedRooms.add(currentRoom);
-        currentRoom.isConnected = true;
+        currentRoom.setConnected(true);
 
         int n = roomList.size() - 1;
         while (n > 0) {

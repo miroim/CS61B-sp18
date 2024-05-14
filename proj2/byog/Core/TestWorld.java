@@ -8,16 +8,19 @@ import java.util.List;
 import java.util.Set;
 
 public class TestWorld {
-
-    public static void addRectangle(TETile[][] world, Rectangle rect) {
-        for (int i = rect.getPosition().getY(); i < rect.getPosition().getY() + rect.getHeight(); i += 1) {
-            for (int j = rect.getPosition().getX(); j < rect.getPosition().getX() + rect.getWidth() - 1; j += 1) {
+    private static final int WIDTH = 80;
+    private static final int HEIGHT = 30;
+    private static void addRectangle(TETile[][] world, Rectangle rect) {
+        int x = rect.getPosition().getX();
+        int y = rect.getPosition().getY();
+        for (int i = y; i < y + rect.getHeight(); i += 1) {
+            for (int j = x; j < x + rect.getWidth() - 1; j += 1) {
                 world[j][i] = Tileset.FLOOR;
-                world[j][rect.getPosition().getY()] = Tileset.WALL;
-                world[j][rect.getPosition().getY() + rect.getHeight() - 1] = Tileset.WALL;
+                world[j][y] = Tileset.WALL;
+                world[j][y + rect.getHeight() - 1] = Tileset.WALL;
             }
-                world[rect.getPosition().getX()][i] = Tileset.WALL;
-                world[rect.getPosition().getX() + rect.getWidth() - 1][i] = Tileset.WALL;
+            world[x][i] = Tileset.WALL;
+            world[x + rect.getWidth() - 1][i] = Tileset.WALL;
         }
     }
 
@@ -35,8 +38,6 @@ public class TestWorld {
     }
 
     public static void main(String[] args) {
-        int WIDTH = 80;
-        int HEIGHT = 30;
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         TETile[][] world = new TETile[WIDTH][HEIGHT];
@@ -45,11 +46,15 @@ public class TestWorld {
                 world[x][y] = Tileset.NOTHING;
             }
         }
-        World w = new World();
+        World w = new World(1454123651);
         w.addRandomRoom();
-        List<Rectangle> r = w.connectAllRoom(w.rectList);
-        w.rectList.addAll(r);
-        renderAll(world, w.rectList);
-        ter.renderFrame(world);
+        List<Rectangle> r = w.connectAllRoom(w.getRectList());
+        w.rectListAddAll(r);
+        for (Rectangle rr : r) {
+            w.rectListAdd(rr);
+            renderAll(world, w.getRectList());
+            ter.renderFrame(world);
+        }
+//        ter.renderFrame(world);
     }
 }
