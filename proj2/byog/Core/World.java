@@ -69,11 +69,11 @@ public class World {
                 x = randomRect.getPosition().getX()
                         + offsetX
                         * RandomUtils
-                            .uniform(RANDOM, randomRect.getWidth() + 4,max * 2);
+                            .uniform(RANDOM, randomRect.getWidth() + 4, max * 2);
                 y = randomRect.getPosition().getY()
                         + offsetY
                         * RandomUtils
-                            .uniform(RANDOM, randomRect.getHeight() + 4,max * 2);
+                            .uniform(RANDOM, randomRect.getHeight() + 4, max * 2);
             } else {
                 x = RandomUtils.uniform(RANDOM, Game.WIDTH - max);
                 y = RandomUtils.uniform(RANDOM, Game.HEIGHT - max);
