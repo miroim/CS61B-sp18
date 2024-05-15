@@ -90,7 +90,7 @@ public class Game {
         world[p.getX()][p.getY()] = Tileset.PLAYER;
     }
 
-    private static void renderAll(TETile[][] world, World w) {
+    public static void renderAll(TETile[][] world, World w) {
         // render WALL
         for (Rectangle rect : w.getRectList()) {
             addRectangle(world, rect);
@@ -163,7 +163,7 @@ public class Game {
 //                        World w = loadWorld();
                         break;
                     case 'q':
-//                        saveGame(w);
+//                        saveWorld(w);
                         drawFrame("Quit");
                         System.exit(0);
                         break;

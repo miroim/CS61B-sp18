@@ -287,7 +287,7 @@ public class Rectangle {
         int offsetY = bMidpoint.getY() - aMidpoint.getY();
         int x = Math.min(aMidpoint.getX(), bMidpoint.getX());
 
-        if (offsetX < 4) {
+        if (offsetX < 3) {
             int y = aMidpoint.getY();
             if (offsetY == 0) {
                 offsetY = 1;
@@ -368,6 +368,10 @@ public class Rectangle {
         } else if (bEdge.equals("left")) {
             if (aEdge.equals("bottom") || aEdge.equals("top")) {
                 hallList.addAll(leftTopOrBottom(this, a));
+            }
+        }  else if (bEdge.equals("bottom")) {
+            if (aEdge.equals("top")) {
+                hallList.addAll(bottomTop(a, this));
             }
         }
         return hallList;

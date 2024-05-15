@@ -1,25 +1,24 @@
 package byog.Core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class World {
-    /* @parameter: rectList
-    Using a rectList to store all room and hall,
-    because one side of hall rectangle's length is 3,
-    we can easily to know that which one in the rectList
-    is room or hall
-     */
+public class World implements Serializable {
 
     /* 1. render first random size room in the scope of World, add to rectList
-       2. render another room nearby last one without overlapping(check with rectList)
-            and out of scope, add to rectList
-       3. render a hall between last two room in rectList, add to rectList
-       4. repeat step 2 and step 3, and till can't render a room in World
-            or reach the random count of room
+       2. render another room nearby rectangle in rectList without overlapping
+            and doesn't out of scope, add to rectList
+       3. repeat step 2, until the number of rectangle reach the random count of room
+       4. random pick a rectangle, pick the closest rectangle and add hall between
+            add them both to list connectedRoom
+       5. find next closest rectangle(unconnected), connect hall to the closest one
+            in connectedRoom
+       6. repeat step 5, until all rectangle be connected
      */
 
+    private static final long serialVersionUID = 123123123123123L;
     private static Random RANDOM;
     private List<Rectangle> rectList;
     private List<Position> floors;
