@@ -23,6 +23,7 @@ public class World {
     private static Random RANDOM;
     private List<Rectangle> rectList;
     private List<Position> floors;
+    private Position player;
     private final int num;
 
     public World(long s) {
@@ -83,11 +84,19 @@ public class World {
         return false;
     }
 
-    public Position getPlayerStartPosition() {
+    private Position getPlayerStartPosition() {
         Rectangle startRoom = getRandomRoom();
         int x = startRoom.getBottom().getX();
         int y = startRoom.getLeft().getY();
         return new Position(x, y);
+    }
+
+    public Position getPlayerPosition() {
+        return player;
+    }
+
+    public void setPlayerPosition(Position p) {
+        player = p;
     }
 
     // use random size rectangle to stand room
@@ -151,6 +160,7 @@ public class World {
                 }
             }
         }
+        player = getPlayerStartPosition();
     }
 
     /* 1. Random pick a room in roomList

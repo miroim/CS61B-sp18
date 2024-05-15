@@ -3,7 +3,16 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-
+import edu.princeton.cs.introcs.StdDraw;
+import java.awt.Color;
+import java.awt.Font;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,12 +24,15 @@ public class Game {
     public static final int HEIGHT = 30;
     private static long SEED;
     private static String move;
-    private static boolean isSave;
+    private static boolean gameOver;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        StdDraw.enableDoubleBuffering();
+        ter.initialize(WIDTH, HEIGHT);
+        startGame();
     }
 
     /**
@@ -50,7 +62,7 @@ public class Game {
 
         World world = new World(SEED);
         world.addRandomRoom();
-        Position playerPosition = world.getPlayerStartPosition();
+        Position playerPosition = world.getPlayerPosition();
 
         List<Rectangle> r = world.connectAllRoom(world.getRectList());
         world.rectListAddAll(r);
@@ -98,7 +110,7 @@ public class Game {
         if (inputMatcher.matches()) {
             SEED = Long.parseLong(inputMatcher.group(1));
             move = inputMatcher.group(2);
-            isSave = input.endsWith(":q");
+            gameOver = input.endsWith(":q");
         }
     }
     private static Position getPlayerCurrentPosition(String input, World w, Position p) {
@@ -107,6 +119,7 @@ public class Game {
         }
         int x = p.getX();
         int y = p.getY();
+        Position newPosition = new Position(x, y);
         for (int i = 0; i < input.length(); i += 1) {
             switch (input.charAt(i)) {
                 case 'w' :
@@ -133,6 +146,109 @@ public class Game {
                     break;
             }
         }
-        return new Position(x, y);
+        w.setPlayerPosition(newPosition);
+        return newPosition;
+    }
+
+    public void startGame() {
+        drawGameFirstPage();
+        while(!gameOver) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = StdDraw.nextKeyTyped();
+                switch (c) {
+                    case 'n':
+                        drawFrame("New game");
+                        break;
+                    case 'l':
+//                        World w = loadWorld();
+                        break;
+                    case 'q':
+//                        saveGame(w);
+                        drawFrame("Quit");
+                        System.exit(0);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    public void drawFrame(String s) {
+        int midWidth = WIDTH / 2;
+        int midHeight = HEIGHT / 2;
+
+        StdDraw.clear();
+        StdDraw.clear(Color.black);
+
+        // Draw the GUI
+//        if (!gameOver) {
+//            Font smallFont = new Font("Monaco", Font.BOLD, 20);
+//            StdDraw.setFont(smallFont);
+//        }
+
+        // Draw the actual text
+        Font bigFont = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(bigFont);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(midWidth, midHeight, s);
+        StdDraw.show();
+    }
+
+    public void drawGameFirstPage() {
+        StdDraw.clear(Color.black);
+        Font bigFont = new Font("Monaco", Font.BOLD, 30);
+        Font smallFont = new Font("Monaco", Font.ITALIC, 20);
+        StdDraw.setPenColor(Color.white);
+        StdDraw.setFont(bigFont);
+        StdDraw.text(0.5 * WIDTH, 0.8 * HEIGHT, "CS61B: THE GAME");
+        StdDraw.setFont(smallFont);
+        StdDraw.text(0.5 * WIDTH, 0.4 * HEIGHT, "New Game (N)");
+        StdDraw.text(0.5 * WIDTH, 0.35 * HEIGHT, "Load Game (L)");
+        StdDraw.text(0.5 * WIDTH, 0.3 * HEIGHT, "Quit (Q)");
+        StdDraw.show();
+    }
+
+    private static World loadWorld() {
+        File f = new File("./world.ser");
+        if (f.exists()) {
+            try {
+                FileInputStream fs = new FileInputStream(f);
+                ObjectInputStream os = new ObjectInputStream(fs);
+                World loadWorld = (World) os.readObject();
+                os.close();
+                return loadWorld;
+            } catch (FileNotFoundException e) {
+                System.out.println("file not found");
+                System.exit(0);
+            } catch (IOException e) {
+                System.out.println(e);
+                System.exit(0);
+            } catch (ClassNotFoundException e) {
+                System.out.println("class not found");
+                System.exit(0);
+            }
+        }
+
+        /* In the case no World has been saved yet, we return a new one. */
+        return new World(SEED);
+    }
+    private static void saveWorld(World w) {
+        File f = new File("./world.ser");
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileOutputStream fs = new FileOutputStream(f);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            os.writeObject(w);
+            os.close();
+        }  catch (FileNotFoundException e) {
+            System.out.println("file not found");
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(0);
+        }
     }
 }
