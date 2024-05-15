@@ -40,7 +40,6 @@ public class Game {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
-        ter.initialize(WIDTH, HEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
@@ -57,9 +56,8 @@ public class Game {
         world.rectListAddAll(r);
         renderAll(finalWorldFrame, world);
         Position playerCurrentPosition = getPlayerCurrentPosition(move, world, playerPosition);
-
         renderPlayer(finalWorldFrame, playerCurrentPosition);
-        ter.renderFrame(finalWorldFrame);
+
         return finalWorldFrame;
     }
 
@@ -127,6 +125,8 @@ public class Game {
                     if (w.isFloors(new Position(x + 1, y))) {
                         x += 1;
                     }
+                    break;
+                default:
                     break;
             }
         }

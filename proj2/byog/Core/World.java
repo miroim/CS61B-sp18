@@ -1,7 +1,5 @@
 package byog.Core;
 
-import byog.TileEngine.Tileset;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -55,22 +53,22 @@ public class World {
         return floors;
     }
 
-    private void getFloors(List<Rectangle> rectList) {
-        for (Rectangle rect : rectList) {
+    private void getFloors(List<Rectangle> list) {
+        for (Rectangle rect : list) {
             floors.addAll(getFloors(rect));
         }
     }
 
     private List<Position> getFloors(Rectangle rect) {
-        List<Position> floors = new ArrayList<>();
+        List<Position> list = new ArrayList<>();
         int x = rect.getPosition().getX();
         int y = rect.getPosition().getY();
         for (int i = y + 1; i < y + rect.getHeight() - 1; i += 1) {
             for (int j = x + 1; j < x + rect.getWidth() - 1; j += 1) {
-                floors.add(new Position(j, i));
+                list.add(new Position(j, i));
             }
         }
-        return floors;
+        return list;
     }
 
     public boolean isFloors(Position p) {
