@@ -1,5 +1,7 @@
 package byog.Core;
 
+import byog.TileEngine.Tileset;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,11 +24,13 @@ public class World {
 
     private static Random RANDOM;
     private List<Rectangle> rectList;
+    private List<Position> floors;
     private final int num;
 
     public World(long s) {
         RANDOM = new Random(s);
         rectList = new ArrayList<>();
+        floors = new ArrayList<>();
         num = RandomUtils.uniform(RANDOM, 10, 20);
     }
 
@@ -40,6 +44,52 @@ public class World {
 
     public void rectListAddAll(List<Rectangle> list) {
         rectList.addAll(list);
+    }
+
+    public Rectangle getRandomRoom() {
+        int randomIndex = RandomUtils.uniform(RANDOM, rectList.size());
+        return rectList.get(randomIndex);
+    }
+
+    public List<Position> getFloors() {
+        return floors;
+    }
+
+    private void getFloors(List<Rectangle> rectList) {
+        for (Rectangle rect : rectList) {
+            floors.addAll(getFloors(rect));
+        }
+    }
+
+    private List<Position> getFloors(Rectangle rect) {
+        List<Position> floors = new ArrayList<>();
+        int x = rect.getPosition().getX();
+        int y = rect.getPosition().getY();
+        for (int i = y + 1; i < y + rect.getHeight() - 1; i += 1) {
+            for (int j = x + 1; j < x + rect.getWidth() - 1; j += 1) {
+                floors.add(new Position(j, i));
+            }
+        }
+        return floors;
+    }
+
+    public boolean isFloors(Position p) {
+        if (floors == null || p == null) {
+            return false;
+        }
+        for (Position floor : floors) {
+            if (floor.equals(p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Position getPlayerStartPosition() {
+        Rectangle startRoom = getRandomRoom();
+        int x = startRoom.getBottom().getX();
+        int y = startRoom.getLeft().getY();
+        return new Position(x, y);
     }
 
     // use random size rectangle to stand room
@@ -147,6 +197,11 @@ public class World {
         for (Rectangle rect : removeList) {
             result.remove(rect);
         }
+        getFloors(roomList);
+        getFloors(result);
+
+        roomList.addAll(result);
+        floors.addAll(Rectangle.getIntersectionPosition(roomList));
         return result;
     }
 }

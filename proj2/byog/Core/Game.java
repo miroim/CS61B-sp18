@@ -5,13 +5,17 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
 import java.util.List;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    private static long SEED;
+    private static String move;
+    private static boolean isSave;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -43,12 +47,18 @@ public class Game {
                 finalWorldFrame[x][y] = Tileset.NOTHING;
             }
         }
-        long seed = Long.parseLong(input.replaceAll("[^0-9]", ""));
-        World world = new World(seed);
+        handleInput(input);
+
+        World world = new World(SEED);
         world.addRandomRoom();
+        Position playerPosition = world.getPlayerStartPosition();
+
         List<Rectangle> r = world.connectAllRoom(world.getRectList());
         world.rectListAddAll(r);
-        renderAll(finalWorldFrame, world.getRectList());
+        renderAll(finalWorldFrame, world);
+        Position playerCurrentPosition = getPlayerCurrentPosition(move, world, playerPosition);
+
+        renderPlayer(finalWorldFrame, playerCurrentPosition);
         ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
@@ -58,7 +68,6 @@ public class Game {
         int y = rect.getPosition().getY();
         for (int i = y; i < y + rect.getHeight(); i += 1) {
             for (int j = x; j < x + rect.getWidth() - 1; j += 1) {
-                world[j][i] = Tileset.FLOOR;
                 world[j][y] = Tileset.WALL;
                 world[j][y + rect.getHeight() - 1] = Tileset.WALL;
             }
@@ -67,16 +76,60 @@ public class Game {
         }
     }
 
-    private static void renderAll(TETile[][] world, List<Rectangle> rectList) {
-        Set<Position> floors = Rectangle.getIntersectionPosition(rectList);
-        for (Rectangle rect : rectList) {
+    private static void renderPlayer(TETile[][] world, Position p) {
+        world[p.getX()][p.getY()] = Tileset.PLAYER;
+    }
+
+    private static void renderAll(TETile[][] world, World w) {
+        // render WALL
+        for (Rectangle rect : w.getRectList()) {
             addRectangle(world, rect);
         }
-        // render FLOOR in intersection
-        for (Position floor : floors) {
+        // render FLOOR
+        for (Position floor : w.getFloors()) {
             int x = floor.getX();
             int y = floor.getY();
             world[x][y] = Tileset.FLOOR;
         }
+    }
+
+    private void handleInput(String input) {
+        input = input.toLowerCase();
+        Pattern inputPattern = Pattern.compile("n(\\d+)s([wasd]+)(:q)?");
+        Matcher inputMatcher = inputPattern.matcher(input);
+        if (inputMatcher.matches()) {
+            SEED = Long.parseLong(inputMatcher.group(1));
+            move = inputMatcher.group(2);
+            isSave = input.endsWith(":q");
+        }
+    }
+    private static Position getPlayerCurrentPosition(String input, World w, Position p) {
+        int x = p.getX();
+        int y = p.getY();
+        for (int i = 0; i < input.length(); i += 1) {
+            switch (input.charAt(i)) {
+                case 'w' :
+                    if (w.isFloors(new Position(x, y + 1))) {
+                        y += 1;
+                    }
+                    break;
+                case 's' :
+                    if (w.isFloors(new Position(x, y - 1))) {
+                        y -= 1;
+                    }
+                    break;
+                case 'a' :
+                    if (w.isFloors(new Position(x - 1, y))) {
+                        x -= 1;
+                    }
+                    break;
+                case 'd' :
+                    if (w.isFloors(new Position(x + 1, y))) {
+                        x += 1;
+                    }
+                    break;
+            }
+        }
+        return new Position(x, y);
     }
 }
