@@ -93,7 +93,7 @@ public class Game {
 
     private void handleInput(String input) {
         input = input.toLowerCase();
-        Pattern inputPattern = Pattern.compile("n(\\d+)s([wasd]+)(:q)?");
+        Pattern inputPattern = Pattern.compile("n(\\d+)s([wasd]+)?(:q)?");
         Matcher inputMatcher = inputPattern.matcher(input);
         if (inputMatcher.matches()) {
             SEED = Long.parseLong(inputMatcher.group(1));
@@ -102,6 +102,9 @@ public class Game {
         }
     }
     private static Position getPlayerCurrentPosition(String input, World w, Position p) {
+        if (input == null) {
+            return p;
+        }
         int x = p.getX();
         int y = p.getY();
         for (int i = 0; i < input.length(); i += 1) {
