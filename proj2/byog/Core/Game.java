@@ -32,7 +32,7 @@ public class Game {
     public void playWithKeyboard() {
         StdDraw.enableDoubleBuffering();
         ter.initialize(WIDTH, HEIGHT);
-        startGame();
+        drawGameIndex();
     }
 
     /**
@@ -52,18 +52,20 @@ public class Game {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
+        handleInput(input);
+
+        return startGame(SEED);
+    }
+    public static TETile[][] startGame(Long seed) {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 finalWorldFrame[x][y] = Tileset.NOTHING;
             }
         }
-        handleInput(input);
-
-        World world = new World(SEED);
+        World world = new World(seed);
         world.addRandomRoom();
         Position playerPosition = world.getPlayerPosition();
-
         List<Rectangle> r = world.connectAllRoom(world.getRectList());
         world.rectListAddAll(r);
         renderAll(finalWorldFrame, world);
@@ -150,16 +152,19 @@ public class Game {
         return newPosition;
     }
 
-    public void startGame() {
+    public void drawGameIndex() {
         drawGameFirstPage();
         while(!gameOver) {
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
                 switch (c) {
                     case 'n':
-                        drawFrame("New game");
+                        SEED = getSeed();
+                        handlePlayerMoveAction();
+
                         break;
                     case 'l':
+                        drawFrame("load");
 //                        World w = loadWorld();
                         break;
                     case 'q':
@@ -168,10 +173,42 @@ public class Game {
                         System.exit(0);
                         break;
                     default:
-                        break;
                 }
             }
         }
+    }
+
+    public void handlePlayerMoveAction() {
+        move = "";
+        while (!gameOver) {
+            if (!StdDraw.hasNextKeyTyped()) {
+                continue;
+            }
+            char key = StdDraw.nextKeyTyped();
+            move += String.valueOf(key).replaceAll("[^wasd]", "");
+            System.out.println(move);
+            ter.renderFrame(startGame(SEED));
+        }
+    }
+
+    public Long getSeed() {
+        StringBuilder input = new StringBuilder();
+
+        while (!input.toString().endsWith("s")) {
+            if (!StdDraw.hasNextKeyTyped()) {
+                continue;
+            }
+            char key = StdDraw.nextKeyTyped();
+            if (input.length() != 0 && key == 's') {
+                Font bigFont = new Font("Monaco", Font.BOLD, 16);
+                StdDraw.setFont(bigFont);
+                return Long.parseLong(input.toString());
+            }
+            input.append(String.valueOf(key).replaceAll("[^0-9]", ""));
+            drawFrame("Enter game seed: " + input);
+        }
+        StdDraw.pause(500);
+        return Long.parseLong(input.toString());
     }
 
     public void drawFrame(String s) {
@@ -182,10 +219,11 @@ public class Game {
         StdDraw.clear(Color.black);
 
         // Draw the GUI
-//        if (!gameOver) {
-//            Font smallFont = new Font("Monaco", Font.BOLD, 20);
-//            StdDraw.setFont(smallFont);
-//        }
+        if (!gameOver) {
+            Font smallFont = new Font("Monaco", Font.BOLD, 20);
+            StdDraw.setFont(smallFont);
+            StdDraw.text(midWidth, 0.3 * HEIGHT, "Press 's' to start game");
+        }
 
         // Draw the actual text
         Font bigFont = new Font("Monaco", Font.BOLD, 30);
