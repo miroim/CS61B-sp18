@@ -1,11 +1,12 @@
 package byog.Core;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
-public class Rectangle {
+public class Rectangle implements Serializable {
     private final Position position;
     private final int width;
     private final int height;

@@ -51,26 +51,28 @@ public class Game {
         // Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-
+        input = input.toLowerCase().replaceAll("[^0-9wasdnq:]", "");
         handleInput(input);
-
-        return startGame(SEED);
+        World world = new World(SEED);
+        world.setPlayerPosition(getPlayerCurrentPosition(move, world));
+        return startGame(world);
     }
-    public static TETile[][] startGame(Long seed) {
+    public static TETile[][] startGame(World world) {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 finalWorldFrame[x][y] = Tileset.NOTHING;
             }
         }
-        World world = new World(seed);
-        world.addRandomRoom();
-        Position playerPosition = world.getPlayerPosition();
-        List<Rectangle> r = world.connectAllRoom(world.getRectList());
-        world.rectListAddAll(r);
+        if (world.getRectList().isEmpty()) {
+            world.addRandomRoom();
+            List<Rectangle> r = world.connectAllRoom(world.getRectList());
+            world.rectListAddAll(r);
+        }
         renderAll(finalWorldFrame, world);
-        Position playerCurrentPosition = getPlayerCurrentPosition(move, world, playerPosition);
-        renderPlayer(finalWorldFrame, playerCurrentPosition);
+        world.setPlayerPosition(getPlayerCurrentPosition(move, world));
+//        System.out.println(world.getPlayerPosition().getX() + " " + world.getPlayerPosition().getY());
+        renderPlayer(finalWorldFrame, world.getPlayerPosition());
 
         return finalWorldFrame;
     }
@@ -115,13 +117,14 @@ public class Game {
             gameOver = input.endsWith(":q");
         }
     }
-    private static Position getPlayerCurrentPosition(String input, World w, Position p) {
+    private static Position getPlayerCurrentPosition(String input, World w) {
+        System.out.println(input);
+        Position playerPosition = w.getPlayerPosition();
         if (input == null) {
-            return p;
+            return playerPosition;
         }
-        int x = p.getX();
-        int y = p.getY();
-        Position newPosition = new Position(x, y);
+        int x = playerPosition.getX();
+        int y = playerPosition.getY();
         for (int i = 0; i < input.length(); i += 1) {
             switch (input.charAt(i)) {
                 case 'w' :
@@ -148,64 +151,65 @@ public class Game {
                     break;
             }
         }
-        w.setPlayerPosition(newPosition);
-        return newPosition;
+        return new Position(x, y);
     }
 
     public void drawGameIndex() {
         drawGameFirstPage();
+        boolean flag = true;
+        World world = null;
+        StringBuilder m = new StringBuilder();
         while(!gameOver) {
+            if (SEED != 0) {
+                world = new World(SEED);
+            }
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
                 switch (c) {
                     case 'n':
                         SEED = getSeed();
-                        handlePlayerMoveAction();
-
                         break;
                     case 'l':
-                        drawFrame("load");
-//                        World w = loadWorld();
+                        world = loadWorld();
                         break;
                     case 'q':
-//                        saveWorld(w);
-                        drawFrame("Quit");
-                        System.exit(0);
+                        if (flag) {
+                            if (SEED != 0) {
+                                startGame(world);
+                                saveWorld(world);
+                            }
+                            System.exit(0);
+                        }
+                        break;
+                    case 'w':
+                    case 'a':
+                    case 's':
+                    case 'd':
+                        move = m.append(c).toString();
                         break;
                     default:
+                        break;
                 }
+                flag = c == ':';
             }
-        }
-    }
-
-    public void handlePlayerMoveAction() {
-        move = "";
-        while (!gameOver) {
-            if (!StdDraw.hasNextKeyTyped()) {
-                continue;
+            if (world != null) {
+                Font font = new Font("Monaco", Font.BOLD, 16);
+                StdDraw.setFont(font);
+                ter.renderFrame(startGame(world));
             }
-            char key = StdDraw.nextKeyTyped();
-            move += String.valueOf(key).replaceAll("[^wasd]", "");
-            System.out.println(move);
-            ter.renderFrame(startGame(SEED));
         }
     }
 
     public Long getSeed() {
         StringBuilder input = new StringBuilder();
-
-        while (!input.toString().endsWith("s")) {
+        char key = ' ';
+        while (key != 's') {
+            drawFrame("Enter game seed: " + input);
             if (!StdDraw.hasNextKeyTyped()) {
                 continue;
             }
-            char key = StdDraw.nextKeyTyped();
-            if (input.length() != 0 && key == 's') {
-                Font bigFont = new Font("Monaco", Font.BOLD, 16);
-                StdDraw.setFont(bigFont);
-                return Long.parseLong(input.toString());
-            }
+            key = StdDraw.nextKeyTyped();
             input.append(String.valueOf(key).replaceAll("[^0-9]", ""));
-            drawFrame("Enter game seed: " + input);
         }
         StdDraw.pause(500);
         return Long.parseLong(input.toString());

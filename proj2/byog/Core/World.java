@@ -18,7 +18,7 @@ public class World implements Serializable {
        6. repeat step 5, until all rectangle be connected
      */
 
-    private static final long serialVersionUID = 123123123123123L;
+//    private static final long serialVersionUID = 123123123123123L;
     private static Random RANDOM;
     private List<Rectangle> rectList;
     private List<Position> floors;
