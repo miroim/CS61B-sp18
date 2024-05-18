@@ -24,6 +24,7 @@ public class Game {
     public static final int HEIGHT = 30;
     private static long SEED;
     private static String move;
+    private static boolean loadSavedGame;
     private static boolean gameOver;
 
     /**
@@ -51,11 +52,15 @@ public class Game {
         // Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        input = input.toLowerCase().replaceAll("[^0-9wasdnq:]", "");
+        input = input.toLowerCase().replaceAll("[^0-9wasdnql:]", "");
         handleInput(input);
         World world = new World(SEED);
+        if (loadSavedGame) {
+            world = loadWorld();
+        }
         return startGame(world);
     }
+
     public static TETile[][] startGame(World world) {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
@@ -71,7 +76,9 @@ public class Game {
         renderAll(finalWorldFrame, world);
         world.setPlayerPosition(getPlayerCurrentPosition(move, world));
         renderPlayer(finalWorldFrame, world.getPlayerPosition());
-
+        if (gameOver) {
+            saveWorld(world);
+        }
         return finalWorldFrame;
     }
 
@@ -107,11 +114,21 @@ public class Game {
 
     private void handleInput(String input) {
         input = input.toLowerCase();
-        Pattern inputPattern = Pattern.compile("n(\\d+)s([wasd]+)?(:q)?");
-        Matcher inputMatcher = inputPattern.matcher(input);
-        if (inputMatcher.matches()) {
-            SEED = Long.parseLong(inputMatcher.group(1));
-            move = inputMatcher.group(2);
+        // handle new game input
+        Pattern newGamePattern = Pattern.compile("n(\\d+)s([wasd]+)?(:q)?");
+        Matcher newGameMatcher = newGamePattern.matcher(input);
+        if (newGameMatcher.matches()) {
+            SEED = Long.parseLong(newGameMatcher.group(1));
+            move = newGameMatcher.group(2);
+            gameOver = input.endsWith(":q");
+        }
+
+        // handle load game input
+        Pattern loadGamePatten = Pattern.compile("l([wasd]+)?(:q)?");
+        Matcher loadGameMatcher = loadGamePatten.matcher(input);
+        if (loadGameMatcher.matches()) {
+            loadSavedGame = input.startsWith("l");
+            move = loadGameMatcher.group(1);
             gameOver = input.endsWith(":q");
         }
     }
@@ -156,7 +173,7 @@ public class Game {
         boolean flag = true;
         World world = null;
 
-        while(!gameOver) {
+        while (!gameOver) {
             move = ""; // initialize move
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();

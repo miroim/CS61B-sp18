@@ -5,7 +5,6 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
 import java.util.List;
-import java.util.Set;
 
 public class TestWorld {
     private static final int WIDTH = 80;
