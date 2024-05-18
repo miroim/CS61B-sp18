@@ -54,7 +54,6 @@ public class Game {
         input = input.toLowerCase().replaceAll("[^0-9wasdnq:]", "");
         handleInput(input);
         World world = new World(SEED);
-        world.setPlayerPosition(getPlayerCurrentPosition(move, world));
         return startGame(world);
     }
     public static TETile[][] startGame(World world) {
@@ -71,7 +70,6 @@ public class Game {
         }
         renderAll(finalWorldFrame, world);
         world.setPlayerPosition(getPlayerCurrentPosition(move, world));
-//        System.out.println(world.getPlayerPosition().getX() + " " + world.getPlayerPosition().getY());
         renderPlayer(finalWorldFrame, world.getPlayerPosition());
 
         return finalWorldFrame;
@@ -118,7 +116,6 @@ public class Game {
         }
     }
     private static Position getPlayerCurrentPosition(String input, World w) {
-        System.out.println(input);
         Position playerPosition = w.getPlayerPosition();
         if (input == null) {
             return playerPosition;
@@ -158,40 +155,40 @@ public class Game {
         drawGameFirstPage();
         boolean flag = true;
         World world = null;
-        StringBuilder m = new StringBuilder();
+
         while(!gameOver) {
-            if (SEED != 0) {
-                world = new World(SEED);
-            }
+            move = ""; // initialize move
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
                 switch (c) {
                     case 'n':
                         SEED = getSeed();
+                        world = new World(SEED); // initialize World by seed
                         break;
                     case 'l':
                         world = loadWorld();
                         break;
                     case 'q':
-                        if (flag) {
-                            if (SEED != 0) {
+                        if (flag) { // if user press ':' and 'q', quit the game
+                            if (world != null) {
                                 startGame(world);
                                 saveWorld(world);
                             }
                             System.exit(0);
                         }
                         break;
+                    // handle user move action
                     case 'w':
                     case 'a':
                     case 's':
                     case 'd':
-                        move = m.append(c).toString();
+                        move = String.valueOf(c);
                         break;
                     default:
-                        break;
                 }
-                flag = c == ':';
+                flag = c == ':'; // if user press ':', set flag to true
             }
+            // render game
             if (world != null) {
                 Font font = new Font("Monaco", Font.BOLD, 16);
                 StdDraw.setFont(font);
@@ -252,7 +249,7 @@ public class Game {
     }
 
     private static World loadWorld() {
-        File f = new File("./world.ser");
+        File f = new File("./world.txt");
         if (f.exists()) {
             try {
                 FileInputStream fs = new FileInputStream(f);
@@ -276,7 +273,7 @@ public class Game {
         return new World(SEED);
     }
     private static void saveWorld(World w) {
-        File f = new File("./world.ser");
+        File f = new File("./world.txt");
         try {
             if (!f.exists()) {
                 f.createNewFile();
