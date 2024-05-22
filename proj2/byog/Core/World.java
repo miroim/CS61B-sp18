@@ -17,7 +17,8 @@ public class World implements Serializable {
             in connectedRoom
        6. repeat step 5, until all rectangle be connected
      */
-
+    public static final int MIN = 6; // the random range length of the width or height for rectangle
+    public static final int MAX = 10;
     private static Random RANDOM;
     private List<Rectangle> rectList;
     private List<Position> floors;
@@ -106,8 +107,6 @@ public class World implements Serializable {
          */
         Rectangle randomRect = null;
         int x, y, width, height;
-        int min = 6;
-        int max = 10;
         Rectangle rectangle;
         do {
             if (!rectList.isEmpty()) {
@@ -124,17 +123,17 @@ public class World implements Serializable {
                 x = randomRect.getPosition().getX()
                         + offsetX
                         * RandomUtils
-                            .uniform(RANDOM, randomRect.getWidth() + 4, max * 2);
+                            .uniform(RANDOM, randomRect.getWidth() + 4, MAX * 2);
                 y = randomRect.getPosition().getY()
                         + offsetY
                         * RandomUtils
-                            .uniform(RANDOM, randomRect.getHeight() + 4, max * 2);
+                            .uniform(RANDOM, randomRect.getHeight() + 4, MAX * 2);
             } else {
-                x = RandomUtils.uniform(RANDOM, Game.WIDTH - max);
-                y = RandomUtils.uniform(RANDOM, Game.HEIGHT - max);
+                x = RandomUtils.uniform(RANDOM, Game.WIDTH - MAX);
+                y = RandomUtils.uniform(RANDOM, Game.HEIGHT - MAX);
             }
-            width = RandomUtils.uniform(RANDOM, min, max);
-            height = RandomUtils.uniform(RANDOM, min, max);
+            width = RandomUtils.uniform(RANDOM, MIN, MAX);
+            height = RandomUtils.uniform(RANDOM, MIN, MAX);
             rectangle = new Rectangle(new Position(x, y), width, height);
         } while (rectangle.isOutOfBound());
         return rectangle;

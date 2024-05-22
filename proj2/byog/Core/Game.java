@@ -82,7 +82,7 @@ public class Game {
         return finalWorldFrame;
     }
 
-    private static void addRectangle(TETile[][] world, Rectangle rect) {
+    private static void renderRectangle(TETile[][] world, Rectangle rect) {
         int x = rect.getPosition().getX();
         int y = rect.getPosition().getY();
         for (int i = y; i < y + rect.getHeight(); i += 1) {
@@ -102,7 +102,7 @@ public class Game {
     public static void renderAll(TETile[][] world, World w) {
         // render WALL
         for (Rectangle rect : w.getRectList()) {
-            addRectangle(world, rect);
+            renderRectangle(world, rect);
         }
         // render FLOOR
         for (Position floor : w.getFloors()) {
@@ -120,17 +120,16 @@ public class Game {
         if (newGameMatcher.matches()) {
             SEED = Long.parseLong(newGameMatcher.group(1));
             move = newGameMatcher.group(2);
-            gameOver = input.endsWith(":q");
         }
 
         // handle load game input
         Pattern loadGamePatten = Pattern.compile("l([wasd]+)?(:q)?");
         Matcher loadGameMatcher = loadGamePatten.matcher(input);
         if (loadGameMatcher.matches()) {
-            loadSavedGame = input.startsWith("l");
             move = loadGameMatcher.group(1);
-            gameOver = input.endsWith(":q");
         }
+        loadSavedGame = input.startsWith("l");
+        gameOver = input.endsWith(":q");
     }
     private static Position getPlayerCurrentPosition(String input, World w) {
         Position playerPosition = w.getPlayerPosition();
