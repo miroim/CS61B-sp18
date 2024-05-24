@@ -122,11 +122,13 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        return remove(root, key).value;
+        V removedValue = get(key);
+        root = remove(root, key);
+        return removedValue;
     }
 
     private Node remove(Node p, K key) {
-        if (p == null || key == null) {
+        if (p == null) {
             return null;
 //            throw new IllegalArgumentException("calls remove() with a null key");
         }
@@ -135,29 +137,22 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         } else if (key.compareTo(p.key) > 0) {
             p.right = remove(p.right, key);
         } else {
-            if (p.right == null) {
-                return p.left;
-            }
-            if (p.left == null) {
+            if (p.left == null && p.right == null) {
+                return null;
+            } else if (p.left == null) {
                 return p.right;
+            } else if (p.right == null) {
+                return p.left;
+            } else {
+                Node temp = min(p.right);
+                p.key = temp.key;
+                p.value = temp.value;
+                p.right = remove(p.right, temp.key);
             }
-            Node temp = p;
-            p = min(p.right);
-            p.right = removeMin(p.right);
-            p.left = temp.left;
         }
         size -= 1;
         return p;
     }
-
-    private Node removeMin(Node p) {
-        if (p.left == null) {
-            return p.right;
-        }
-        p.left = removeMin(p.left);
-        return p;
-    }
-
 
     /** Removes the key-value entry for the specified key only if it is
      *  currently mapped to the specified value.  Returns the VALUE removed,
@@ -165,7 +160,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      **/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        V v = get(key);
+        if (!v.equals(value)) {
+            return null;
+        }
+        return remove(key);
     }
 
     // return true if this map is empty
@@ -237,5 +236,4 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         }
         return min(root).key;
     }
-
 }
