@@ -2,6 +2,7 @@ package lab9;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import edu.princeton.cs.algs4.Queue;
 import java.util.Set;
 
 /**
@@ -14,7 +15,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     private static final int DEFAULT_SIZE = 16;
     private static final double MAX_LF = 0.75;
-    private static final double MIN_LF = 0.25;
 
     private ArrayMap<K, V>[] buckets;
     private int size;
@@ -100,8 +100,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     @Override
     public Set<K> keySet() {
         Set<K> set = new HashSet<>();
-        for (K k : this) {
-            set.add(k);
+        for (int i = 0; i < buckets.length; i += 1) {
+            set.addAll(buckets[i].keySet());
         }
         return set;
     }
@@ -117,9 +117,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
         int i = hash(key);
         size -= 1;
-        if (size / buckets.length < MIN_LF) {
-            resize(buckets.length / 2);
-        }
         return buckets[i].remove(key);
     }
 
@@ -140,9 +137,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
         int i = hash(key);
         size -= 1;
-        if (size / buckets.length < MIN_LF) {
-            resize(buckets.length / 2);
-        }
         return buckets[i].remove(key, value);
     }
 
