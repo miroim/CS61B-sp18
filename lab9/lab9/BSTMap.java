@@ -1,8 +1,10 @@
 package lab9;
 
 import edu.princeton.cs.algs4.Queue;
-
-import java.util.*;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.NoSuchElementException;
 
 /**
  * Implementation of interface Map61B with BST as core data structure.
@@ -124,6 +126,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     public V remove(K key) {
         V removedValue = get(key);
         root = remove(root, key);
+        if (!isEmpty()) {
+            size -= 1;
+        }
         return removedValue;
     }
 
@@ -150,7 +155,6 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
                 p.right = remove(p.right, temp.key);
             }
         }
-        size -= 1;
         return p;
     }
 
