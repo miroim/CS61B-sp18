@@ -168,7 +168,7 @@ public class World implements Serializable {
     public List<Rectangle> connectAllRoom(List<Rectangle> roomList) {
         List<Rectangle> result = new ArrayList<>();
         List<Rectangle> connectedRooms = new ArrayList<>();
-        // Choose a random starting room
+        // Choose a random rectangle as starting room
         Rectangle currentRoom = roomList.get(RandomUtils.uniform(RANDOM, roomList.size()));
         connectedRooms.add(currentRoom);
         currentRoom.setConnected(true);
